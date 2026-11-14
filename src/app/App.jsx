@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/navigation/Navbar';
 import { Sidebar } from '../components/navigation/Sidebar';
+import { MobileBottomNav } from '../components/navigation/MobileBottomNav';
+import { StoriesBar } from '../features/feed/StoriesBar';
 import { PostCard } from '../components/cards/PostCard';
 import { WalletCard } from '../components/cards/WalletCard';
 import { FarmsView } from '../features/farms/FarmsView';
@@ -8,8 +10,13 @@ import { AuraScoreView } from '../features/aura-score/AuraScoreView';
 import { LeaderboardView } from '../features/leaderboard/LeaderboardView';
 import { ModerationDashboard } from '../features/moderation/ModerationDashboard';
 import { ProfileView } from '../features/profile/ProfileView';
+import { ExploreView } from '../features/explore/ExploreView';
+import { AnalyticsView } from '../features/analytics/AnalyticsView';
+import { SavedPostsView } from '../features/saved/SavedPostsView';
 import { CreatePostModal } from '../features/posts/CreatePostModal';
 import { ReportModal } from '../features/moderation/ReportModal';
+import { ShareModal } from '../components/common/ShareModal';
+import { NotificationsDrawer } from '../features/notifications/NotificationsDrawer';
 import { authService } from '../services/auth.service';
 import { postsService } from '../services/posts.service';
 import { farmsService } from '../services/farms.service';
@@ -24,11 +31,15 @@ export function App() {
   const [farmStatus, setFarmStatus] = useState(null);
   const [wallet, setWallet] = useState(null);
   const [auraScore, setAuraScore] = useState(null);
+  const [savedPostIds, setSavedPostIds] = useState(new Set(['post-101']));
 
-  // Modals
+  // Modals & Drawers
   const [createPostOpen, setCreatePostOpen] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportingPost, setReportingPost] = useState(null);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [sharingPost, setSharingPost] = useState(null);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
   const showToast = (msg) => {
@@ -68,7 +79,7 @@ export function App() {
     const user = await authService.switchDemoAccount(email);
     setCurrentUser(user);
     await loadUserData(user);
-    showToast(`Switched to demo persona: ${user.display_name} (${user.role})`);
+    showToast(`Switched persona: ${user.display_name} (${user.role})`);
   };
 
   const handlePublish = async (postData) => {
@@ -80,7 +91,7 @@ export function App() {
         media: postData.media,
         visibility: postData.visibility,
       });
-      showToast('Post successfully published! +25 AP earned.');
+      showToast('Post published! +25 AP earned.');
       await loadUserData(currentUser);
     } catch (err) {
       alert(`Error publishing post: ${err.message}`);
@@ -96,7 +107,7 @@ export function App() {
     try {
       const res = await postsService.submitRating(postId, currentUser.id, score);
       setPosts(posts.map(p => p.id === postId ? { ...p, ratingAverage: res.ratingAverage, ratingsCount: res.ratingsCount, userRating: res.userRating } : p));
-      showToast(`Rating submitted! +2 AP earned.`);
+      showToast(`Rating recorded! +2 AP earned.`);
       await loadUserData(currentUser);
     } catch (err) {
       alert(err.message);
@@ -119,7 +130,7 @@ export function App() {
   };
 
   const handleDeletePost = async (postId) => {
-    if (!confirm('Are you sure you want to delete this post? This will release the storage quota.')) return;
+    if (!confirm('Are you sure you want to delete this post? This will release storage quota.')) return;
     await postsService.deletePost(postId, currentUser.id);
     showToast('Post deleted and storage quota reclaimed.');
     await loadUserData(currentUser);
@@ -131,27 +142,48 @@ export function App() {
     await loadUserData(currentUser);
   };
 
+  const handleToggleBookmark = (postId) => {
+    setSavedPostIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(postId)) {
+        next.delete(postId);
+        showToast('Removed from saved collection');
+      } else {
+        next.add(postId);
+        showToast('Saved to collection');
+      }
+      return next;
+    });
+  };
+
+  const handleOpenShare = (post) => {
+    setSharingPost(post);
+    setShareModalOpen(true);
+  };
+
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100">
+    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col selection:bg-purple-500 selection:text-white">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-3 bg-purple-600/90 text-white text-xs font-semibold rounded-2xl shadow-2xl backdrop-blur-md border border-purple-400/30 animate-in fade-in slide-in-from-bottom-2">
+        <div className="fixed top-20 sm:top-auto sm:bottom-6 right-4 sm:right-6 z-50 px-4 py-3 bg-purple-600/90 text-white text-xs font-semibold rounded-2xl shadow-2xl backdrop-blur-md border border-purple-400/30 animate-in fade-in slide-in-from-bottom-2">
           {toastMessage}
         </div>
       )}
 
-      {/* Top Navigation */}
+      {/* Top App Bar */}
       <Navbar
         currentUser={currentUser}
         onOpenCreatePost={() => setCreatePostOpen(true)}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onSwitchDemo={handleSwitchDemo}
+        onOpenNotifications={() => setNotificationsOpen(true)}
+        unreadNotificationsCount={2}
       />
 
       {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex gap-8">
-        {/* Left Sidebar */}
+      <div className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-8 flex gap-8 flex-1 pb-24 md:pb-8">
+        {/* Left Desktop Sidebar */}
         <Sidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
@@ -160,12 +192,18 @@ export function App() {
         />
 
         {/* Dynamic Center Stage */}
-        <main className="flex-1 max-w-2xl min-w-0 space-y-6">
+        <main className="flex-1 max-w-2xl min-w-0 space-y-5 mx-auto">
           {activeTab === 'feed' && (
-            <div className="space-y-6">
+            <div className="space-y-4">
+              {/* Mobile Stories Carousel */}
+              <StoriesBar
+                currentUser={currentUser}
+                onOpenCreatePost={() => setCreatePostOpen(true)}
+              />
+
               {/* Feed Filter Header */}
-              <div className="glass-card p-3 flex items-center justify-between">
-                <div className="flex gap-2">
+              <div className="glass-card p-2 sm:p-3 flex items-center justify-between rounded-2xl">
+                <div className="flex gap-1.5 sm:gap-2">
                   <button
                     onClick={() => setFeedFilter('latest')}
                     className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
@@ -184,18 +222,18 @@ export function App() {
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    Top Rated (Quality)
+                    Top Rated
                   </button>
                 </div>
-                <span className="text-xs text-slate-400 hidden sm:block">
+                <span className="text-[11px] text-slate-400 hidden sm:block">
                   Verified Beta Network
                 </span>
               </div>
 
               {/* Feed Posts */}
               {posts.length === 0 ? (
-                <div className="p-12 text-center text-xs text-slate-400 glass-card">
-                  No posts yet in this feed. Click "New Post" to share media!
+                <div className="p-12 text-center text-xs text-slate-400 glass-card rounded-2xl">
+                  No posts yet in this feed. Tap (+) to create the first post!
                 </div>
               ) : (
                 posts.map((post) => (
@@ -211,10 +249,43 @@ export function App() {
                       setReportingPost(target);
                       setReportModalOpen(true);
                     }}
+                    onShare={handleOpenShare}
+                    onBookmark={handleToggleBookmark}
+                    isBookmarked={savedPostIds.has(post.id)}
                   />
                 ))
               )}
             </div>
+          )}
+
+          {activeTab === 'explore' && (
+            <ExploreView
+              onSelectPost={(item) => {
+                showToast(`Viewing @${item.author}'s artwork`);
+              }}
+            />
+          )}
+
+          {activeTab === 'analytics' && (
+            <AnalyticsView
+              currentUser={currentUser}
+              farmStatus={farmStatus}
+              wallet={wallet}
+              auraScore={auraScore}
+            />
+          )}
+
+          {activeTab === 'saved' && (
+            <SavedPostsView
+              savedPostIds={savedPostIds}
+              allPosts={posts}
+              currentUserId={currentUser?.id}
+              onLike={handleLike}
+              onRate={handleRate}
+              onComment={handleComment}
+              onShare={handleOpenShare}
+              onBookmark={handleToggleBookmark}
+            />
           )}
 
           {activeTab === 'farms' && (
@@ -240,7 +311,7 @@ export function App() {
           {activeTab === 'profile' && (
             <ProfileView
               currentUser={currentUser}
-              userPosts={posts.filter(p => p.userId === currentUser?.id)}
+              userPosts={posts.filter((p) => p.userId === currentUser?.id)}
               onDeletePost={handleDeletePost}
             />
           )}
@@ -250,6 +321,23 @@ export function App() {
           )}
         </main>
       </div>
+
+      {/* Mobile Fixed Bottom Navigation Bar */}
+      <MobileBottomNav
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onOpenCreatePost={() => setCreatePostOpen(true)}
+        farmStatus={farmStatus}
+        currentUser={currentUser}
+        unreadCount={2}
+        onOpenNotifications={() => setNotificationsOpen(true)}
+      />
+
+      {/* Slide-over Notifications Center */}
+      <NotificationsDrawer
+        isOpen={notificationsOpen}
+        onClose={() => setNotificationsOpen(false)}
+      />
 
       {/* Create Post Modal */}
       <CreatePostModal
@@ -270,6 +358,16 @@ export function App() {
         targetPost={reportingPost}
         reporterId={currentUser?.id}
         onReportSubmitted={() => showToast('Report submitted for moderator review.')}
+      />
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={shareModalOpen}
+        onClose={() => {
+          setShareModalOpen(false);
+          setSharingPost(null);
+        }}
+        post={sharingPost}
       />
     </div>
   );
