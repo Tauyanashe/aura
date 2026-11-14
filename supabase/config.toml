@@ -1,0 +1,45 @@
+# AURA Supabase Project Configuration
+project_id = "aura-social-beta"
+
+[api]
+port = 54321
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[auth]
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["https://aura-social.vercel.app"]
+jwt_expiry = 3600
+enable_signup = true
+
+[storage]
+enabled = false # Media storage is delegated to Google Drive Beta Adapter per blueprint
+
+[functions.drive-upload]
+verify_jwt = true
+
+[functions.drive-media]
+verify_jwt = false # Custom JWT & public view authorization handled in function
+
+[functions.drive-delete]
+verify_jwt = true
+
+[functions.publish-post]
+verify_jwt = true
+
+[functions.delete-post]
+verify_jwt = true
+
+[functions.award-aura]
+verify_jwt = true
+
+[functions.calculate-aura-score]
+verify_jwt = true
+
+[functions.renew-farms]
+verify_jwt = false # Triggered by cron secret
