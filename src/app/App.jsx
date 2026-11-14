@@ -17,12 +17,14 @@ import { CreatePostModal } from '../features/posts/CreatePostModal';
 import { ReportModal } from '../features/moderation/ReportModal';
 import { ShareModal } from '../components/common/ShareModal';
 import { NotificationsDrawer } from '../features/notifications/NotificationsDrawer';
+import { LandingPage } from '../features/landing/LandingPage';
 import { authService } from '../services/auth.service';
 import { postsService } from '../services/posts.service';
 import { farmsService } from '../services/farms.service';
 import { auraService } from '../services/aura.service';
 
 export function App() {
+  const [viewMode, setViewMode] = useState('landing'); // 'landing' or 'app'
   const [currentUser, setCurrentUser] = useState(null);
   const [activeTab, setActiveTab] = useState('feed');
   const [feedFilter, setFeedFilter] = useState('latest');
@@ -161,6 +163,11 @@ export function App() {
     setShareModalOpen(true);
   };
 
+  // Render Landing Page if in landing mode
+  if (viewMode === 'landing') {
+    return <LandingPage onEnterApp={() => setViewMode('app')} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col selection:bg-purple-500 selection:text-white">
       {/* Toast Notification */}
@@ -170,7 +177,7 @@ export function App() {
         </div>
       )}
 
-      {/* Top App Bar */}
+      {/* Top App Bar with Landing toggle */}
       <Navbar
         currentUser={currentUser}
         onOpenCreatePost={() => setCreatePostOpen(true)}
@@ -180,6 +187,18 @@ export function App() {
         onOpenNotifications={() => setNotificationsOpen(true)}
         unreadNotificationsCount={2}
       />
+
+      {/* Quick link banner to return to Landing / Kings overview */}
+      <div className="bg-slate-900/60 border-b border-slate-800/60 py-1.5 px-4 text-center text-[11px] text-slate-400 flex items-center justify-center gap-2">
+        <span>AURA Private Beta Platform</span>
+        <span>•</span>
+        <button
+          onClick={() => setViewMode('landing')}
+          className="text-purple-400 hover:text-purple-300 font-semibold underline underline-offset-2"
+        >
+          View Rising Aura Kings & Landing Page
+        </button>
+      </div>
 
       {/* Main Container */}
       <div className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-8 flex gap-8 flex-1 pb-24 md:pb-8">
