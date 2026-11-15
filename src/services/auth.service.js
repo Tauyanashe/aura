@@ -3,13 +3,23 @@ import { supabase, isMockMode } from '../lib/supabase';
 // Persistent mock state for seamless local beta testing
 const MOCK_STORAGE_KEY = 'aura_beta_auth_session';
 
+function safeGet(key) {
+  try { return typeof window !== 'undefined' && window.localStorage ? localStorage.getItem(key) : null; } catch { return null; }
+}
+function safeSet(key, val) {
+  try { if (typeof window !== 'undefined' && window.localStorage) localStorage.setItem(key, val); } catch { /* ignore */ }
+}
+function safeRemove(key) {
+  try { if (typeof window !== 'undefined' && window.localStorage) localStorage.removeItem(key); } catch { /* ignore */ }
+}
+
 // No hardcoded demo users — all accounts are real user registrations
 const DEMO_USERS = [];
 
 export const authService = {
   async getCurrentSession() {
     if (isMockMode) {
-      const stored = localStorage.getItem(MOCK_STORAGE_KEY);
+      const stored = safeGet(MOCK_STORAGE_KEY);
       if (stored) {
         try {
           return JSON.parse(stored);
@@ -20,27 +30,32 @@ export const authService = {
       return null;
     }
 
-    const { data: { session }, error } = await supabase.auth.getSession();
-    if (error || !session) return null;
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session) return null;
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*, user_roles(role)')
-      .eq('id', session.user.id)
-      .single();
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*, user_roles(role)')
+        .eq('id', session.user.id)
+        .single();
 
-    return {
-      id: session.user.id,
-      email: session.user.email,
-      ...profile,
-      role: profile?.user_roles?.[0]?.role || 'user',
-    };
+      return {
+        id: session.user.id,
+        email: session.user.email,
+        ...profile,
+        role: profile?.user_roles?.[0]?.role || 'user',
+      };
+    } catch (err) {
+      console.warn('Session check fallback:', err);
+      return null;
+    }
   },
 
   async login(email, password) {
     if (isMockMode) {
       // In mock mode, any email/password combo creates or retrieves a session
-      const existing = localStorage.getItem(MOCK_STORAGE_KEY);
+      const existing = safeGet(MOCK_STORAGE_KEY);
       if (existing) {
         try {
           const parsed = JSON.parse(existing);
@@ -62,7 +77,7 @@ export const authService = {
         farms: [],
         gender: 'other',
       };
-      localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(user));
+      safeSet(MOCK_STORAGE_KEY, JSON.stringify(user));
       return user;
     }
 
@@ -88,7 +103,7 @@ export const authService = {
         farms: [],
         gender: gender || 'other',
       };
-      localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(newUser));
+      safeSet(MOCK_STORAGE_KEY, JSON.stringify(newUser));
       return newUser;
     }
 
@@ -117,12 +132,12 @@ export const authService = {
 
   async updateProfile(userId, updates) {
     if (isMockMode) {
-      const stored = localStorage.getItem(MOCK_STORAGE_KEY);
+      const stored = safeGet(MOCK_STORAGE_KEY);
       if (stored) {
         const user = JSON.parse(stored);
         if (user.id === userId) {
           Object.assign(user, updates);
-          localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(user));
+          safeSet(MOCK_STORAGE_KEY, JSON.stringify(user));
           return user;
         }
       }
@@ -140,7 +155,7 @@ export const authService = {
 
   async logout() {
     if (isMockMode) {
-      localStorage.removeItem(MOCK_STORAGE_KEY);
+      safeRemove(MOCK_STORAGE_KEY);
       return;
     }
     await supabase.auth.signOut();

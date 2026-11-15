@@ -17,6 +17,7 @@ import {
 import { RISING_AURA_KINGS } from './landingData';
 import { Button } from '../../components/common/Button';
 import { AuraLogo } from '../../components/common/AuraLogo';
+import { Avatar } from '../../components/common/Avatar';
 
 function getRankTitle(creator, timeframe) {
   if (!creator) return '';
@@ -187,149 +188,182 @@ export function LandingPage({ onEnterApp }) {
           {/* Podium (Top 3 Kings) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end pt-4">
             {/* 2nd Place */}
-            <div className="order-2 md:order-1 glass-card p-6 rounded-3xl border border-slate-700/80 space-y-4 hover:border-slate-500 transition-all">
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full text-xs font-black bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1.5">
-                  🥈 Rank #2
-                </span>
-                <span className="text-[11px] font-bold text-emerald-400">{topThree[1].velocity}</span>
-              </div>
+            {topThree[1] && (
+              <div className="order-2 md:order-1 glass-card p-6 rounded-3xl border border-slate-700/80 space-y-4 hover:border-slate-500 transition-all">
+                <div className="flex items-center justify-between">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-black bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1.5">
+                    🥈 Rank #2
+                  </span>
+                  <span className="text-[11px] font-bold text-emerald-400">{topThree[1].velocity}</span>
+                </div>
 
-              <div className="text-center space-y-2">
-                <div className="relative inline-block">
-                  <img
-                    src={topThree[1].avatar}
-                    alt={topThree[1].displayName}
-                    className="w-20 h-20 rounded-full object-cover ring-4 ring-slate-400/30 mx-auto"
-                  />
-                  <div className="absolute -bottom-1 -right-1 bg-slate-800 text-slate-200 p-1 rounded-full border-2 border-slate-950 text-xs">
-                    🥈
+                <div className="text-center space-y-2">
+                  <div className="relative inline-block">
+                    <Avatar
+                      src={topThree[1].avatar}
+                      displayName={topThree[1].displayName}
+                      username={topThree[1].username}
+                      size="xl"
+                      ring="ring-slate-400/30 mx-auto"
+                    />
+                    <div className="absolute -bottom-1 -right-1 bg-slate-800 text-slate-200 p-1 rounded-full border-2 border-slate-950 text-xs">
+                      🥈
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <h3 className="font-bold text-white text-base">{topThree[1].displayName}</h3>
-                  <span className="text-xs text-purple-400">@{topThree[1].username}</span>
-                </div>
-
-                <div className="text-xs text-slate-400 line-clamp-2 px-2">{topThree[1].bio}</div>
-              </div>
-
-              {/* Featured artwork teaser */}
-              <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800">
-                <img
-                  src={topThree[1].featuredWork}
-                  alt="Featured"
-                  className="w-full h-full object-cover hover:scale-105 transition duration-300"
-                />
-              </div>
-
-              <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
-                <span className="text-slate-400">Aura Score:</span>
-                <span className="font-black text-purple-300 text-sm font-mono">{topThree[1].auraScore} AS</span>
-              </div>
-            </div>
-
-            {/* 1st Place - The King */}
-            <div className="order-1 md:order-2 glass-panel p-8 rounded-3xl border-2 border-amber-500/60 shadow-2xl shadow-amber-500/10 space-y-5 relative overflow-hidden bg-gradient-to-b from-slate-900 via-amber-950/10 to-slate-900 -translate-y-2">
-              <div className="absolute top-0 right-0 px-4 py-1.5 bg-gradient-to-l from-amber-500 to-amber-600 text-slate-950 font-black text-xs uppercase tracking-wider rounded-bl-2xl shadow-lg flex items-center gap-1.5">
-                <Crown className="w-3.5 h-3.5 fill-current" />
-                 {topThree[0].gender === 'female' ? (timeframe === 'daily' ? 'Daily Queen' : 'Weekly Sovereign') : (timeframe === 'daily' ? 'Daily King' : 'Weekly Sovereign')}
-              </div>
-
-              <div className="flex items-center justify-between pt-2">
-                <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                  🥇 Rank #1
-                </span>
-                <span className="text-xs font-black text-emerald-400 flex items-center gap-1">
-                  <TrendingUp className="w-3.5 h-3.5" />
-                  {topThree[0].velocity}
-                </span>
-              </div>
-
-              <div className="text-center space-y-3">
-                <div className="relative inline-block">
-                  <img
-                    src={topThree[0].avatar}
-                    alt={topThree[0].displayName}
-                    className="w-24 h-24 rounded-full object-cover ring-4 ring-amber-400 shadow-xl shadow-amber-500/30 mx-auto"
-                  />
-                  <div className="absolute -top-3 -right-2 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 p-1.5 rounded-full border-2 border-slate-950 shadow-lg animate-bounce">
-                    <Crown className="w-4 h-4 fill-current" />
+                  <div>
+                    <h3 className="font-bold text-white text-base">{topThree[1].displayName}</h3>
+                    <span className="text-xs text-purple-400">@{topThree[1].username}</span>
                   </div>
+
+                  <div className="text-xs text-slate-400 line-clamp-2 px-2">{topThree[1].bio}</div>
                 </div>
 
-                <div>
-                  <h3 className="font-black text-white text-lg">{topThree[0].displayName}</h3>
-                  <span className="text-xs text-amber-400 font-semibold">@{topThree[0].username}</span>
-                  <div className="mt-1">
-                    <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
-                      {topThree[0].tier}
-                    </span>
+                {/* Featured artwork teaser */}
+                <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800">
+                  {topThree[1].featuredWork ? (
+                    <img
+                      src={topThree[1].featuredWork}
+                      alt="Featured"
+                      className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-tr from-purple-900/40 via-slate-900 to-pink-900/40 flex items-center justify-center text-purple-400/60 font-mono text-[10px]">
+                      <Sparkles className="w-5 h-5 mr-1.5 text-purple-400" />
+                      <span>{topThree[1].category || 'Visual Art'}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
+                  <span className="text-slate-400">Aura Score:</span>
+                  <span className="font-black text-purple-300 text-sm font-mono">{topThree[1].auraScore} AS</span>
+                </div>
+              </div>
+            )}
+
+            {/* 1st Place - The King / Queen */}
+            {topThree[0] && (
+              <div className="order-1 md:order-2 glass-panel p-8 rounded-3xl border-2 border-amber-500/60 shadow-2xl shadow-amber-500/10 space-y-5 relative overflow-hidden bg-gradient-to-b from-slate-900 via-amber-950/10 to-slate-900 -translate-y-2">
+                <div className="absolute top-0 right-0 px-4 py-1.5 bg-gradient-to-l from-amber-500 to-amber-600 text-slate-950 font-black text-xs uppercase tracking-wider rounded-bl-2xl shadow-lg flex items-center gap-1.5">
+                  <Crown className="w-3.5 h-3.5 fill-current" />
+                  {topThree[0].crown || (topThree[0].gender === 'female' ? (timeframe === 'daily' ? 'Daily Queen' : 'Weekly Sovereign') : (timeframe === 'daily' ? 'Daily King' : 'Weekly Sovereign'))}
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                    🥇 Rank #1
+                  </span>
+                  <span className="text-xs font-black text-emerald-400 flex items-center gap-1">
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    {topThree[0].velocity}
+                  </span>
+                </div>
+
+                <div className="text-center space-y-3">
+                  <div className="relative inline-block">
+                    <Avatar
+                      src={topThree[0].avatar}
+                      displayName={topThree[0].displayName}
+                      username={topThree[0].username}
+                      size="xl"
+                      ring="ring-amber-400 shadow-xl shadow-amber-500/30 mx-auto"
+                    />
+                    <div className="absolute -top-3 -right-2 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 p-1.5 rounded-full border-2 border-slate-950 shadow-lg animate-bounce">
+                      <Crown className="w-4 h-4 fill-current" />
+                    </div>
                   </div>
+
+                  <div>
+                    <h3 className="font-black text-white text-lg">{topThree[0].displayName}</h3>
+                    <span className="text-xs text-amber-400 font-semibold">@{topThree[0].username}</span>
+                    <div className="mt-1">
+                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                        {topThree[0].tier}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-300 line-clamp-2">{topThree[0].bio}</p>
                 </div>
 
-                <p className="text-xs text-slate-300 line-clamp-2">{topThree[0].bio}</p>
-              </div>
+                {/* Featured artwork */}
+                <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-950 border border-amber-500/30 shadow-inner">
+                  {topThree[0].featuredWork ? (
+                    <img
+                      src={topThree[0].featuredWork}
+                      alt="Featured"
+                      className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-tr from-amber-950/40 via-slate-900 to-purple-900/40 flex items-center justify-center text-amber-400/80 font-mono text-[10px]">
+                      <Crown className="w-5 h-5 mr-1.5 text-amber-400" />
+                      <span>{topThree[0].category || 'Featured Sovereign Work'}</span>
+                    </div>
+                  )}
+                </div>
 
-              {/* Featured artwork */}
-              <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-950 border border-amber-500/30 shadow-inner">
-                <img
-                  src={topThree[0].featuredWork}
-                  alt="Featured"
-                  className="w-full h-full object-cover hover:scale-105 transition duration-500"
-                />
+                <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
+                  <span className="text-slate-400">Total Aura Score:</span>
+                  <span className="font-black text-amber-300 text-base font-mono">{topThree[0].auraScore} AS</span>
+                </div>
               </div>
-
-              <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
-                <span className="text-slate-400">Total Aura Score:</span>
-                <span className="font-black text-amber-300 text-base font-mono">{topThree[0].auraScore} AS</span>
-              </div>
-            </div>
+            )}
 
             {/* 3rd Place */}
-            <div className="order-3 glass-card p-6 rounded-3xl border border-slate-700/80 space-y-4 hover:border-slate-500 transition-all">
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full text-xs font-black bg-slate-800 text-amber-600 border border-slate-700 flex items-center gap-1.5">
-                  🥉 Rank #3
-                </span>
-                <span className="text-[11px] font-bold text-emerald-400">{topThree[2].velocity}</span>
-              </div>
+            {topThree[2] && (
+              <div className="order-3 glass-card p-6 rounded-3xl border border-slate-700/80 space-y-4 hover:border-slate-500 transition-all">
+                <div className="flex items-center justify-between">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-black bg-slate-800 text-amber-600 border border-slate-700 flex items-center gap-1.5">
+                    🥉 Rank #3
+                  </span>
+                  <span className="text-[11px] font-bold text-emerald-400">{topThree[2].velocity}</span>
+                </div>
 
-              <div className="text-center space-y-2">
-                <div className="relative inline-block">
-                  <img
-                    src={topThree[2].avatar}
-                    alt={topThree[2].displayName}
-                    className="w-20 h-20 rounded-full object-cover ring-4 ring-amber-600/30 mx-auto"
-                  />
-                  <div className="absolute -bottom-1 -right-1 bg-slate-800 text-amber-500 p-1 rounded-full border-2 border-slate-950 text-xs">
-                    🥉
+                <div className="text-center space-y-2">
+                  <div className="relative inline-block">
+                    <Avatar
+                      src={topThree[2].avatar}
+                      displayName={topThree[2].displayName}
+                      username={topThree[2].username}
+                      size="xl"
+                      ring="ring-amber-600/30 mx-auto"
+                    />
+                    <div className="absolute -bottom-1 -right-1 bg-slate-800 text-amber-500 p-1 rounded-full border-2 border-slate-950 text-xs">
+                      🥉
+                    </div>
                   </div>
+
+                  <div>
+                    <h3 className="font-bold text-white text-base">{topThree[2].displayName}</h3>
+                    <span className="text-xs text-purple-400">@{topThree[2].username}</span>
+                  </div>
+
+                  <div className="text-xs text-slate-400 line-clamp-2 px-2">{topThree[2].bio}</div>
                 </div>
 
-                <div>
-                  <h3 className="font-bold text-white text-base">{topThree[2].displayName}</h3>
-                  <span className="text-xs text-purple-400">@{topThree[2].username}</span>
+                {/* Featured artwork */}
+                <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800">
+                  {topThree[2].featuredWork ? (
+                    <img
+                      src={topThree[2].featuredWork}
+                      alt="Featured"
+                      className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-tr from-purple-900/40 via-slate-900 to-pink-900/40 flex items-center justify-center text-purple-400/60 font-mono text-[10px]">
+                      <Sparkles className="w-5 h-5 mr-1.5 text-purple-400" />
+                      <span>{topThree[2].category || 'Soundscapes'}</span>
+                    </div>
+                  )}
                 </div>
 
-                <div className="text-xs text-slate-400 line-clamp-2 px-2">{topThree[2].bio}</div>
+                <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
+                  <span className="text-slate-400">Aura Score:</span>
+                  <span className="font-black text-purple-300 text-sm font-mono">{topThree[2].auraScore} AS</span>
+                </div>
               </div>
-
-              {/* Featured artwork */}
-              <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800">
-                <img
-                  src={topThree[2].featuredWork}
-                  alt="Featured"
-                  className="w-full h-full object-cover hover:scale-105 transition duration-300"
-                />
-              </div>
-
-              <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
-                <span className="text-slate-400">Aura Score:</span>
-                <span className="font-black text-purple-300 text-sm font-mono">{topThree[2].auraScore} AS</span>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Runners-Up Table */}
@@ -359,10 +393,12 @@ export function LandingPage({ onEnterApp }) {
                       {creator.movement}
                     </span>
 
-                    <img
+                    <Avatar
                       src={creator.avatar}
-                      alt={creator.displayName}
-                      className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-500/20"
+                      displayName={creator.displayName}
+                      username={creator.username}
+                      size="sm"
+                      ring="ring-purple-500/20"
                     />
 
                     <div>
@@ -378,13 +414,13 @@ export function LandingPage({ onEnterApp }) {
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-400">{creator.bio}</p>
+                      <span className="text-[11px] text-slate-400">{creator.category}</span>
                     </div>
                   </div>
 
                   <div className="text-right">
-                    <div className="font-black text-white text-sm font-mono">{creator.auraScore} AS</div>
-                    <div className="text-[10px] text-emerald-400 font-semibold">{creator.velocity}</div>
+                    <span className="font-bold text-purple-300 font-mono block">{creator.auraScore} AS</span>
+                    <span className="text-[10px] text-emerald-400 font-semibold">{creator.velocity}</span>
                   </div>
                 </div>
               ))}

@@ -85,14 +85,17 @@ export function App() {
 
   // On mount: check for existing session — skip landing if already logged in
   useEffect(() => {
-    authService.getCurrentSession().then((user) => {
-      if (user) {
-        setCurrentUser(user);
-        setViewMode('app');
-        loadUserData(user);
-      }
-      // Otherwise stay on landing
-    });
+    authService.getCurrentSession()
+      .then((user) => {
+        if (user) {
+          setCurrentUser(user);
+          setViewMode('app');
+          loadUserData(user);
+        }
+      })
+      .catch((err) => {
+        console.warn('Failed to restore session:', err);
+      });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reload feed when filter changes (only while in app)
