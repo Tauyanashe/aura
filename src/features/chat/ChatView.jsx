@@ -12,6 +12,7 @@ import {
   X
 } from 'lucide-react';
 import { chatService } from '../../services/chat.service';
+import { Avatar } from '../../components/common/Avatar';
 import clsx from 'clsx';
 
 function formatTime(isoString) {
@@ -170,10 +171,13 @@ export function ChatView({ currentUser }) {
                   )}
                 >
                   <div className="relative flex-shrink-0">
-                    <img
-                      src={other.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80'}
-                      alt={other.display_name}
-                      className="w-11 h-11 rounded-full object-cover ring-2 ring-purple-500/20"
+                    <Avatar
+                      src={other.avatar}
+                      userId={other.id}
+                      displayName={other.display_name}
+                      username={other.username}
+                      size="md"
+                      ring="ring-purple-500/20"
                     />
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 absolute bottom-0 right-0 ring-2 ring-slate-950" />
                   </div>
@@ -227,10 +231,13 @@ export function ChatView({ currentUser }) {
                 </button>
 
                 <div className="relative">
-                  <img
-                    src={activeConversation.otherUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80'}
-                    alt={activeConversation.otherUser?.display_name}
-                    className="w-9 h-9 rounded-full object-cover ring-2 ring-purple-500/30"
+                  <Avatar
+                    src={activeConversation.otherUser?.avatar}
+                    userId={activeConversation.otherUser?.id}
+                    displayName={activeConversation.otherUser?.display_name}
+                    username={activeConversation.otherUser?.username}
+                    size="sm"
+                    ring="ring-purple-500/30"
                   />
                   <span className="w-2 h-2 rounded-full bg-emerald-400 absolute bottom-0 right-0 ring-1.5 ring-slate-950" />
                 </div>
@@ -273,10 +280,13 @@ export function ChatView({ currentUser }) {
                       className={clsx('flex items-end gap-2', isMine ? 'justify-end' : 'justify-start')}
                     >
                       {!isMine && (
-                        <img
-                          src={activeConversation.otherUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80'}
-                          alt="Sender"
-                          className="w-6 h-6 rounded-full object-cover flex-shrink-0 ring-1 ring-purple-500/30 mb-0.5"
+                        <Avatar
+                          src={activeConversation.otherUser?.avatar}
+                          userId={activeConversation.otherUser?.id}
+                          displayName={activeConversation.otherUser?.display_name}
+                          username={activeConversation.otherUser?.username}
+                          size="xs"
+                          ring="ring-purple-500/30 mb-0.5"
                         />
                       )}
 
@@ -377,10 +387,13 @@ export function ChatView({ currentUser }) {
                   className="pt-2 pb-2 px-3 rounded-2xl flex items-center justify-between hover:bg-slate-800/60 cursor-pointer transition"
                 >
                   <div className="flex items-center gap-3">
-                    <img
-                      src={user.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80'}
-                      alt={user.display_name}
-                      className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-500/20"
+                    <Avatar
+                      src={user.avatar}
+                      userId={user.id}
+                      displayName={user.display_name}
+                      username={user.username}
+                      size="md"
+                      ring="ring-purple-500/20"
                     />
                     <div>
                       <span className="font-bold text-xs text-white block">{user.display_name}</span>

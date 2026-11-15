@@ -2,6 +2,7 @@ import React from 'react';
 import { Sparkles, Coins, PlusCircle, Bell, Search, BarChart3, Bookmark, UserCheck, Shield, LogOut } from 'lucide-react';
 import { Button } from '../common/Button';
 import { AuraLogo } from '../common/AuraLogo';
+import { Avatar } from '../common/Avatar';
 
 export function Navbar({
   currentUser,
@@ -128,10 +129,13 @@ export function Navbar({
                 className="flex items-center gap-2 p-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500/40 transition group"
                 title="View your profile"
               >
-                <img
-                  src={currentUser.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60'}
-                  alt={currentUser.display_name}
-                  className="w-6 h-6 rounded-full object-cover ring-1 ring-purple-500/30 group-hover:ring-purple-400 transition"
+                <Avatar
+                  src={currentUser.avatar}
+                  userId={currentUser.id}
+                  displayName={currentUser.display_name}
+                  username={currentUser.username}
+                  size="xs"
+                  ring="ring-purple-500/30 group-hover:ring-purple-400"
                 />
                 <span className="hidden sm:inline text-xs font-semibold text-slate-200 group-hover:text-purple-300 transition truncate max-w-[100px]">
                   {currentUser.display_name || currentUser.username}

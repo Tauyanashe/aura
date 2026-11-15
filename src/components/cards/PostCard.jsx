@@ -13,6 +13,7 @@ import {
   Info
 } from 'lucide-react';
 import { mediaService } from '../../services/media.service';
+import { Avatar } from '../common/Avatar';
 
 export function PostCard({
   post,
@@ -77,10 +78,13 @@ export function PostCard({
           onClick={() => onViewProfile && onViewProfile(post.userId)}
         >
           <div className="relative">
-            <img
-              src={post.author?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
-              alt={post.author?.displayName}
-              className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-500/30 group-hover:ring-purple-400 p-0.5 bg-slate-900 transition"
+            <Avatar
+              src={post.author?.avatar}
+              userId={post.userId}
+              displayName={post.author?.displayName}
+              username={post.author?.username}
+              size="md"
+              ring="ring-purple-500/30 group-hover:ring-purple-400"
             />
             {post.author?.tier === 'Legend' && (
               <span className="absolute -bottom-1 -right-1 text-[10px]">✨</span>

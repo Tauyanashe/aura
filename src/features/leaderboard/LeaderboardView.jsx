@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Medal, Sparkles, Crown } from 'lucide-react';
 import { auraService } from '../../services/aura.service';
+import { Avatar } from '../../components/common/Avatar';
 
 export function LeaderboardView({ onViewProfile }) {
   const [leaders, setLeaders] = useState([]);
@@ -8,7 +9,7 @@ export function LeaderboardView({ onViewProfile }) {
 
   useEffect(() => {
     auraService.getLeaderboard().then((data) => {
-      setLeaders(data);
+      setLeaders(data || []);
       setLoading(false);
     });
   }, []);
@@ -19,7 +20,7 @@ export function LeaderboardView({ onViewProfile }) {
         <div>
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <Trophy className="w-5 h-5 text-amber-400" />
-            AURA Beta Creator Leaderboard
+            AURA Creator Leaderboard
           </h2>
           <p className="text-xs text-slate-400 mt-1">
             Top creators ranked by normalized Aura Score (quality, engagement, and consistency).
@@ -30,6 +31,14 @@ export function LeaderboardView({ onViewProfile }) {
       <div className="glass-card divide-y divide-slate-800/80 rounded-2xl overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-xs text-slate-400">Loading leaderboard rankings...</div>
+        ) : leaders.length === 0 ? (
+          <div className="p-12 text-center text-slate-400 space-y-3">
+            <Sparkles className="w-8 h-8 text-purple-400/50 mx-auto" />
+            <p className="text-sm font-semibold text-slate-200">No ranked creators yet</p>
+            <p className="text-xs max-w-sm mx-auto">
+              Be the first to publish high-quality content and earn Aura Points to claim the #1 spot!
+            </p>
+          </div>
         ) : (
           leaders.map((user, idx) => {
             const isQueen = user.gender === 'female';
@@ -49,10 +58,13 @@ export function LeaderboardView({ onViewProfile }) {
                      `#${idx + 1}`}
                   </div>
 
-                  <img
-                    src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
-                    alt={user.displayName}
-                    className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-500/20 group-hover:ring-purple-400 transition"
+                  <Avatar
+                    src={user.avatar}
+                    userId={user.id}
+                    displayName={user.displayName}
+                    username={user.username}
+                    size="md"
+                    ring="ring-purple-500/20 group-hover:ring-purple-400"
                   />
 
                   <div>

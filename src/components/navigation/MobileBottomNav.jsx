@@ -1,5 +1,6 @@
 import React from 'react';
 import { Home, Compass, Plus, MessageSquare, User } from 'lucide-react';
+import { Avatar } from '../common/Avatar';
 import clsx from 'clsx';
 
 export function MobileBottomNav({
@@ -72,14 +73,14 @@ export function MobileBottomNav({
               )}
             >
               <div className="relative">
-                {item.avatar ? (
-                  <img
-                    src={item.avatar}
-                    alt="Profile"
-                    className={clsx(
-                      'w-5 h-5 rounded-full object-cover transition-all',
-                      isActive ? 'ring-2 ring-purple-500 scale-110' : 'opacity-80'
-                    )}
+                {item.id === 'profile' ? (
+                  <Avatar
+                    src={currentUser?.avatar}
+                    userId={currentUser?.id}
+                    displayName={currentUser?.display_name}
+                    username={currentUser?.username}
+                    size="xs"
+                    ring={isActive ? 'ring-purple-500 scale-110' : 'ring-transparent opacity-80'}
                   />
                 ) : (
                   <Icon className={clsx('w-5 h-5 transition-transform', isActive && 'scale-110')} />

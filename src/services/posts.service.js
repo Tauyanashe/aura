@@ -3,69 +3,8 @@ import { AP_REWARDS } from '../lib/constants';
 
 const MOCK_POSTS_KEY = 'aura_mock_posts';
 
-const INITIAL_MOCK_POSTS = [
-  {
-    id: 'post-101',
-    userId: 'user-elena-001',
-    author: {
-      id: 'user-elena-001',
-      username: 'elena_v',
-      displayName: 'Elena Rostova',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
-      tier: 'Artisan',
-    },
-    caption: 'Neon luminescence in the city after rainfall. Testing the new AURA 4K storage compression pipeline.',
-    status: 'published',
-    visibility: 'public',
-    mediaAsset: {
-      id: 'media-101',
-      mimeType: 'image/jpeg',
-      sizeBytes: 2450000,
-      url: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=1200&auto=format&fit=crop&q=80',
-    },
-    likesCount: 18,
-    commentsCount: 4,
-    ratingsCount: 7,
-    ratingAverage: 4.86,
-    hasLiked: false,
-    userRating: null,
-    createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
-    comments: [
-      { id: 'c-1', username: 'marcus_k', displayName: 'Marcus Thorne', body: 'The dynamic range on this shot is incredible.', createdAt: new Date(Date.now() - 3600000 * 2).toISOString() },
-      { id: 'c-2', username: 'sylvia_art', displayName: 'Sylvia Chen', body: 'Spectacular reflection!', createdAt: new Date(Date.now() - 3600000 * 1).toISOString() },
-    ],
-  },
-  {
-    id: 'post-102',
-    userId: 'user-marcus-002',
-    author: {
-      id: 'user-marcus-002',
-      username: 'marcus_k',
-      displayName: 'Marcus Thorne',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-      tier: 'Aura Master',
-    },
-    caption: 'Exploring algorithmic geometry and modular synth soundscapes in the studio today.',
-    status: 'published',
-    visibility: 'public',
-    mediaAsset: {
-      id: 'media-102',
-      mimeType: 'image/jpeg',
-      sizeBytes: 3120000,
-      url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop&q=80',
-    },
-    likesCount: 34,
-    commentsCount: 6,
-    ratingsCount: 12,
-    ratingAverage: 4.92,
-    hasLiked: false,
-    userRating: null,
-    createdAt: new Date(Date.now() - 3600000 * 12).toISOString(),
-    comments: [
-      { id: 'c-3', username: 'elena_v', displayName: 'Elena Rostova', body: 'Stunning setup Marcus!', createdAt: new Date(Date.now() - 3600000 * 8).toISOString() },
-    ],
-  },
-];
+// No hardcoded test posts — feed starts empty for real users
+const INITIAL_MOCK_POSTS = [];
 
 export const postsService = {
   async getFeed(currentUserId, filter = 'latest') {
@@ -129,7 +68,7 @@ export const postsService = {
           id: currentUserId,
           username: currentUser.username,
           displayName: currentUser.display_name,
-          avatar: currentUser.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+          avatar: currentUser.avatar || null,
           tier: currentUser.tier || 'Novice',
         },
         caption,

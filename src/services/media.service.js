@@ -71,8 +71,7 @@ export const mediaService = {
     if (mediaAsset.url) return mediaAsset.url;
 
     if (isMockMode) {
-      // Return a reliable fallback placeholder if dataUrl isn't stored
-      return `https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80`;
+      return '';
     }
 
     // Authenticated Edge Function stream

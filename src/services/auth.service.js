@@ -3,36 +3,8 @@ import { supabase, isMockMode } from '../lib/supabase';
 // Persistent mock state for seamless local beta testing
 const MOCK_STORAGE_KEY = 'aura_beta_auth_session';
 
-const DEMO_USERS = [
-  {
-    id: 'user-elena-001',
-    email: 'elena@aura.network',
-    username: 'elena_v',
-    display_name: 'Elena Rostova',
-    bio: 'Digital artist & photographer exploring generative visual patterns.',
-    is_private: false,
-    role: 'user',
-    balance: 420,
-    auraScore: 780,
-    tier: 'Artisan',
-    farms: ['farm-pioneer'],
-    gender: 'female',
-  },
-  {
-    id: 'user-admin-002',
-    email: 'moderator@aura.network',
-    username: 'aura_admin',
-    display_name: 'AURA Beta Mod',
-    bio: 'Platform integrity, community guidelines, and beta operations.',
-    is_private: false,
-    role: 'admin',
-    balance: 1500,
-    auraScore: 2450,
-    tier: 'Legend',
-    farms: ['farm-creator-pro'],
-    gender: 'male',
-  },
-];
+// No hardcoded demo users — all accounts are real user registrations
+const DEMO_USERS = [];
 
 export const authService = {
   async getCurrentSession() {
@@ -67,21 +39,31 @@ export const authService = {
 
   async login(email, password) {
     if (isMockMode) {
-      const found = DEMO_USERS.find(u => u.email.toLowerCase() === email.toLowerCase()) || {
+      // In mock mode, any email/password combo creates or retrieves a session
+      const existing = localStorage.getItem(MOCK_STORAGE_KEY);
+      if (existing) {
+        try {
+          const parsed = JSON.parse(existing);
+          if (parsed.email === email) return parsed;
+        } catch { /* continue */ }
+      }
+      const user = {
         id: 'user-' + Math.random().toString(36).substring(2, 9),
         email,
         username: email.split('@')[0].replace(/[^a-z0-9_]/gi, '_').toLowerCase(),
         display_name: email.split('@')[0],
-        bio: 'AURA Beta Member',
+        avatar: null,
+        bio: '',
         is_private: false,
         role: 'user',
         balance: 100,
         auraScore: 100,
         tier: 'Novice',
-        farms: ['farm-free'],
+        farms: [],
+        gender: 'other',
       };
-      localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(found));
-      return found;
+      localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(user));
+      return user;
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -96,13 +78,14 @@ export const authService = {
         email,
         username: username.toLowerCase().replace(/[^a-z0-9_]/g, '_'),
         display_name: displayName,
-        bio: 'New AURA Explorer',
+        avatar: null,
+        bio: '',
         is_private: false,
         role: 'user',
         balance: 100, // 100 AP Welcome Bonus
         auraScore: 100,
         tier: 'Novice',
-        farms: ['farm-free'],
+        farms: [],
         gender: gender || 'other',
       };
       localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(newUser));
@@ -132,10 +115,27 @@ export const authService = {
     return { success: true };
   },
 
-  async switchDemoAccount(targetEmail) {
-    const user = DEMO_USERS.find(u => u.email === targetEmail) || DEMO_USERS[0];
-    localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(user));
-    return user;
+  async updateProfile(userId, updates) {
+    if (isMockMode) {
+      const stored = localStorage.getItem(MOCK_STORAGE_KEY);
+      if (stored) {
+        const user = JSON.parse(stored);
+        if (user.id === userId) {
+          Object.assign(user, updates);
+          localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(user));
+          return user;
+        }
+      }
+      return null;
+    }
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', userId)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
   },
 
   async logout() {

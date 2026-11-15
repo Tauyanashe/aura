@@ -41,7 +41,7 @@ export function App() {
   const [farmStatus, setFarmStatus] = useState(null);
   const [wallet, setWallet] = useState(null);
   const [auraScore, setAuraScore] = useState(null);
-  const [savedPostIds, setSavedPostIds] = useState(new Set(['post-101']));
+  const [savedPostIds, setSavedPostIds] = useState(new Set());
 
   // Modals & Drawers
   const [createPostOpen, setCreatePostOpen] = useState(false);
@@ -205,6 +205,17 @@ export function App() {
   const handleOpenShare = (post) => {
     setSharingPost(post);
     setShareModalOpen(true);
+  };
+
+  const handleUserUpdate = async (updates) => {
+    if (!currentUser) return;
+    try {
+      await authService.updateProfile(currentUser.id, updates);
+      setCurrentUser(prev => ({ ...prev, ...updates }));
+      showToast('Profile updated');
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+    }
   };
 
   // ─── Profile viewer helper (clicking another user) ────────────────────────
@@ -413,6 +424,7 @@ export function App() {
               viewingUserId={viewingProfileUser}
               userPosts={posts.filter((p) => p.userId === (viewingProfileUser || currentUser?.id))}
               onDeletePost={handleDeletePost}
+              onUserUpdate={handleUserUpdate}
               onMessageUser={(userId) => {
                 setActiveTab('chat');
                 showToast('Opening DM thread...');

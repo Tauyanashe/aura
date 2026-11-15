@@ -1,41 +1,15 @@
 import React, { useState } from 'react';
-import { Sparkles, Crown, UserPlus, UserCheck, TrendingUp, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Sparkles, Crown, UserPlus, UserCheck, TrendingUp, ShieldCheck, Users } from 'lucide-react';
+import { Avatar } from '../common/Avatar';
 
-const SUGGESTED_CREATORS = [
-  {
-    id: 'user-sylvia-004',
-    displayName: 'Sylvia Chen',
-    username: 'sylvia_art',
-    tier: 'Legend',
-    gender: 'female',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
-    tagline: 'Cyberpunk & low-light photography',
-  },
-  {
-    id: 'user-marcus-003',
-    displayName: 'Marcus Thorne',
-    username: 'marcus_k',
-    tier: 'Aura Master',
-    gender: 'male',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
-    tagline: 'Modular synth soundscapes',
-  },
-  {
-    id: 'user-elena-001',
-    displayName: 'Elena Rostova',
-    username: 'elena_v',
-    tier: 'Artisan',
-    gender: 'female',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    tagline: 'Generative chromatic pattern experiments',
-  },
-];
+// No hardcoded test users — populated dynamically
+const SUGGESTED_CREATORS = [];
 
 const TRENDING_TOPICS = [
-  { tag: '#GenerativePattern', count: '1.4k AP' },
-  { tag: '#SoundArchitecture', count: '980 AP' },
-  { tag: '#CyberpunkNoir', count: '840 AP' },
-  { tag: '#VirtualFarms', count: '620 AP' },
+  { tag: '#AURACommunity', count: '1.2k AP' },
+  { tag: '#HighTrustSocial', count: '980 AP' },
+  { tag: '#ReputationEconomy', count: '840 AP' },
+  { tag: '#FarmBackedStorage', count: '620 AP' },
 ];
 
 export function RightSidebar({ onViewProfile, setActiveTab, currentUser, onToast }) {
@@ -68,63 +42,76 @@ export function RightSidebar({ onViewProfile, setActiveTab, currentUser, onToast
               onClick={() => setActiveTab('leaderboard')}
               className="text-[11px] font-bold text-purple-400 hover:text-purple-300 transition"
             >
-              See All
+              Leaderboard
             </button>
           </div>
 
           <div className="space-y-3">
-            {visibleCreators.map((creator) => {
-              const isFollowing = !!followingMap[creator.id];
-              return (
-                <div
-                  key={creator.id}
-                  onClick={() => onViewProfile && onViewProfile(creator.id)}
-                  className="flex items-center justify-between gap-3 p-2 rounded-2xl hover:bg-slate-800/40 cursor-pointer transition group"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <img
-                      src={creator.avatar}
-                      alt={creator.displayName}
-                      className="w-9 h-9 rounded-full object-cover ring-2 ring-purple-500/20 group-hover:ring-purple-400 transition flex-shrink-0"
-                    />
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5 truncate">
-                        <span className="font-bold text-xs text-slate-100 group-hover:text-purple-300 transition truncate">
-                          {creator.displayName}
-                        </span>
-                        <span className="text-[10px] text-amber-400 font-bold">
-                          {creator.gender === 'female' ? '♀' : '♂'}
+            {visibleCreators.length === 0 ? (
+              <div className="py-4 text-center text-xs text-slate-500 space-y-2">
+                <Users className="w-6 h-6 text-purple-400/50 mx-auto" />
+                <p className="text-slate-400 font-medium">New Creators Joining Daily</p>
+                <p className="text-[11px] text-slate-500">
+                  As new members register and publish, top-ranked royalty will appear here.
+                </p>
+              </div>
+            ) : (
+              visibleCreators.map((creator) => {
+                const isFollowing = !!followingMap[creator.id];
+                return (
+                  <div
+                    key={creator.id}
+                    onClick={() => onViewProfile && onViewProfile(creator.id)}
+                    className="flex items-center justify-between gap-3 p-2 rounded-2xl hover:bg-slate-800/40 cursor-pointer transition group"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <Avatar
+                        src={creator.avatar}
+                        userId={creator.id}
+                        displayName={creator.displayName}
+                        username={creator.username}
+                        size="sm"
+                        ring="ring-purple-500/20 group-hover:ring-purple-400"
+                      />
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 truncate">
+                          <span className="font-bold text-xs text-slate-100 group-hover:text-purple-300 transition truncate">
+                            {creator.displayName}
+                          </span>
+                          <span className="text-[10px] text-amber-400 font-bold">
+                            {creator.gender === 'female' ? '♀' : '♂'}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-slate-400 block truncate">
+                          @{creator.username}
                         </span>
                       </div>
-                      <span className="text-[11px] text-slate-400 block truncate">
-                        @{creator.username}
-                      </span>
                     </div>
-                  </div>
 
-                  <button
-                    onClick={(e) => toggleFollow(creator.id, e)}
-                    className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition flex items-center gap-1 flex-shrink-0 ${
-                      isFollowing
-                        ? 'bg-slate-800 text-slate-300 border border-slate-700'
-                        : 'bg-purple-600/20 text-purple-300 border border-purple-500/30 hover:bg-purple-600 hover:text-white'
-                    }`}
-                  >
-                    {isFollowing ? (
-                      <>
-                        <UserCheck className="w-3 h-3 text-emerald-400" />
-                        <span>Following</span>
-                      </>
-                    ) : (
-                      <>
-                        <UserPlus className="w-3 h-3" />
-                        <span>Follow</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              );
-            })}
+                    <button
+                      onClick={(e) => toggleFollow(creator.id, e)}
+                      className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition flex items-center gap-1 flex-shrink-0 ${
+                        isFollowing
+                          ? 'bg-slate-800 text-slate-300 border border-slate-700'
+                          : 'bg-purple-600/20 text-purple-300 border border-purple-500/30 hover:bg-purple-600 hover:text-white'
+                      }`}
+                    >
+                      {isFollowing ? (
+                        <>
+                          <UserCheck className="w-3 h-3 text-emerald-400" />
+                          <span>Following</span>
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="w-3 h-3" />
+                          <span>Follow</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 

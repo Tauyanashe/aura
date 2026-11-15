@@ -4,73 +4,7 @@ import {
   UserPlus, UserCheck, MessageSquare, Sparkles, Grid3x3, Heart
 } from 'lucide-react';
 import { Button } from '../../components/common/Button';
-
-// ─── Mock creator profiles for public viewing ─────────────────────────────
-const MOCK_CREATOR_PROFILES = {
-  'user-elena-001': {
-    id: 'user-elena-001',
-    username: 'elena_v',
-    display_name: 'Elena Rostova',
-    bio: 'Digital artist & photographer exploring generative visual patterns.',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
-    tier: 'Artisan',
-    auraScore: 840,
-    is_private: false,
-    gender: 'female',
-    followers: 1247,
-    following: 83,
-    postsCount: 14,
-    joinedDate: 'Sep 2026',
-  },
-  'user-marcus-003': {
-    id: 'user-marcus-003',
-    username: 'marcus_k',
-    display_name: 'Marcus Thorne',
-    bio: 'Modular analog synth soundscapes & architecture photographer.',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-    tier: 'Aura Master',
-    auraScore: 1980,
-    is_private: false,
-    gender: 'male',
-    followers: 3821,
-    following: 102,
-    postsCount: 29,
-    joinedDate: 'Aug 2026',
-  },
-  'user-sylvia-004': {
-    id: 'user-sylvia-004',
-    username: 'sylvia_art',
-    display_name: 'Sylvia Chen',
-    bio: 'Cyberpunk & wet pavement low-light photography. Legend tier creator.',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
-    tier: 'Legend',
-    auraScore: 2890,
-    is_private: false,
-    gender: 'female',
-    followers: 8640,
-    following: 44,
-    postsCount: 47,
-    joinedDate: 'Jul 2026',
-  },
-};
-
-// Mock featured posts for other creators
-const MOCK_CREATOR_POSTS = {
-  'user-elena-001': [
-    'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=400',
-    'https://images.unsplash.com/photo-1620207418302-439b387441b0?w=400',
-    'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
-  ],
-  'user-marcus-003': [
-    'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400',
-    'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=400',
-  ],
-  'user-sylvia-004': [
-    'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400',
-    'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=400',
-    'https://images.unsplash.com/photo-1573511860302-28c524319d2a?w=400',
-  ],
-};
+import { Avatar } from '../../components/common/Avatar';
 
 // ─── Follow state helpers (localStorage mock) ────────────────────────────
 const FOLLOWS_KEY = 'aura_mock_follows';
@@ -97,36 +31,32 @@ function toggleFollow(followerId, targetId) {
 }
 
 // ─── Component ───────────────────────────────────────────────────────────
-export function ProfileView({ currentUser, viewingUserId, userPosts, onDeletePost, onMessageUser, onBack }) {
+export function ProfileView({ currentUser, viewingUserId, userPosts, onDeletePost, onMessageUser, onBack, onUserUpdate }) {
   const [isPrivate, setIsPrivate] = useState(currentUser?.is_private || false);
   const [bio, setBio] = useState(currentUser?.bio || '');
+  const [displayName, setDisplayName] = useState(currentUser?.display_name || '');
   const [saved, setSaved] = useState(false);
   const [following, setFollowing] = useState(false);
   const [localFollowerCount, setLocalFollowerCount] = useState(0);
+  const [localAvatar, setLocalAvatar] = useState(currentUser?.avatar || null);
 
   // Determine whether we are viewing someone else's profile
   const isOwnProfile = !viewingUserId || viewingUserId === currentUser?.id;
 
-  // The profile data to display
-  const profileData = isOwnProfile
-    ? currentUser
-    : (MOCK_CREATOR_PROFILES[viewingUserId] || null);
+  // For other profiles, we'd fetch from API — for now show basic info
+  const profileData = isOwnProfile ? currentUser : null;
 
-  const creatorPosts = isOwnProfile
-    ? userPosts
-    : (MOCK_CREATOR_POSTS[viewingUserId] || []);
+  const creatorPosts = isOwnProfile ? userPosts : [];
 
   // On mount / viewingUserId change — sync follow state
   useEffect(() => {
     if (!isOwnProfile && currentUser && viewingUserId) {
       const followed = isFollowing(currentUser.id, viewingUserId);
       setFollowing(followed);
-      setLocalFollowerCount(profileData?.followers ?? 0);
+      setLocalFollowerCount(0);
     }
   }, [viewingUserId, currentUser?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Seed the creator as auto-followable by default: show Elena's profile as
-  // pre-loaded for new users who haven't yet followed anyone.
   const handleFollow = () => {
     if (!currentUser) return;
     const nowFollowing = toggleFollow(currentUser.id, viewingUserId);
@@ -134,27 +64,25 @@ export function ProfileView({ currentUser, viewingUserId, userPosts, onDeletePos
     setLocalFollowerCount(c => nowFollowing ? c + 1 : Math.max(0, c - 1));
   };
 
+  const handleAvatarChange = (dataUrl) => {
+    setLocalAvatar(dataUrl);
+    // Update the current user session with new avatar
+    if (onUserUpdate) {
+      onUserUpdate({ avatar: dataUrl });
+    }
+  };
+
   const handleSave = (e) => {
     e.preventDefault();
+    if (onUserUpdate) {
+      onUserUpdate({ bio, display_name: displayName, is_private: isPrivate });
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
 
-  // ─── PUBLIC profile view (another creator) ──────────────────────────────
+  // ─── PUBLIC profile view (another user) ──────────────────────────────
   if (!isOwnProfile) {
-    if (!profileData) {
-      return (
-        <div className="glass-card p-10 rounded-3xl text-center text-slate-400 text-sm">
-          Profile not found.
-          {onBack && (
-            <button onClick={onBack} className="mt-4 block mx-auto text-purple-400 hover:text-purple-300 text-xs font-semibold">
-              ← Go back
-            </button>
-          )}
-        </div>
-      );
-    }
-
     return (
       <div className="space-y-5">
         {/* Back button */}
@@ -168,130 +96,42 @@ export function ProfileView({ currentUser, viewingUserId, userPosts, onDeletePos
           </button>
         )}
 
-        {/* Profile Header Card */}
         <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-5">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-            {/* Avatar */}
-            <div className="relative flex-shrink-0">
-              <img
-                src={profileData.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200'}
-                alt={profileData.display_name}
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover ring-4 ring-purple-500/40 shadow-xl"
-              />
-              {/* Verified badge */}
-              <div className="absolute -bottom-1 -right-1 bg-purple-600 text-white p-1 rounded-full border-2 border-slate-950">
-                <Sparkles className="w-3 h-3" />
-              </div>
-            </div>
+          <div className="flex flex-col items-center text-center gap-4">
+            <Avatar
+              userId={viewingUserId}
+              displayName="User"
+              size="xl"
+              ring="ring-purple-500/40"
+            />
+            <p className="text-sm text-slate-300">This profile will load once connected to the backend.</p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleFollow}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                  following
+                    ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-rose-900/30 hover:border-rose-500/40 hover:text-rose-400'
+                    : 'bg-gradient-to-r from-purple-600 to-pink-600 border-transparent text-white hover:from-purple-500 hover:to-pink-500 shadow-md shadow-purple-500/20'
+                }`}
+              >
+                {following ? (
+                  <><UserCheck className="w-3.5 h-3.5" /> Following</>
+                ) : (
+                  <><UserPlus className="w-3.5 h-3.5" /> Follow</>
+                )}
+              </button>
 
-            {/* Meta */}
-            <div className="flex-1 space-y-3 min-w-0">
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-black text-white">{profileData.display_name}</h2>
-                  <span className="text-xs text-purple-400 font-mono">@{profileData.username}</span>
-                  <div className="mt-1.5 flex items-center justify-center sm:justify-start gap-2 flex-wrap">
-                    <span className="px-2.5 py-0.5 bg-purple-500/10 text-purple-300 border border-purple-500/20 rounded-full text-[11px] font-bold">
-                      {profileData.tier}
-                    </span>
-                    <span className="px-2.5 py-0.5 bg-amber-500/10 text-amber-300 border border-amber-500/20 rounded-full text-[11px] font-bold">
-                      {profileData.auraScore} AS
-                    </span>
-                    <span className="px-2.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700 rounded-full text-[11px]">
-                      {profileData.gender === 'female' ? '♀ Aura Queen' : '♂ Aura King'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Action buttons */}
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button
-                    onClick={handleFollow}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                      following
-                        ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-rose-900/30 hover:border-rose-500/40 hover:text-rose-400'
-                        : 'bg-gradient-to-r from-purple-600 to-pink-600 border-transparent text-white hover:from-purple-500 hover:to-pink-500 shadow-md shadow-purple-500/20'
-                    }`}
-                  >
-                    {following ? (
-                      <><UserCheck className="w-3.5 h-3.5" /> Following</>
-                    ) : (
-                      <><UserPlus className="w-3.5 h-3.5" /> Follow</>
-                    )}
-                  </button>
-
-                  {onMessageUser && currentUser && (
-                    <button
-                      onClick={() => onMessageUser(profileData.id)}
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 border border-slate-700 text-slate-200 hover:bg-slate-700 transition"
-                    >
-                      <MessageSquare className="w-3.5 h-3.5" />
-                      Message
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Bio */}
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-lg">
-                {profileData.bio}
-              </p>
-
-              {/* Stats Row */}
-              <div className="flex items-center justify-center sm:justify-start gap-6 pt-1">
-                <div className="text-center">
-                  <div className="text-base font-black text-white">{profileData.postsCount}</div>
-                  <div className="text-[11px] text-slate-400">Posts</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-base font-black text-white">{localFollowerCount.toLocaleString()}</div>
-                  <div className="text-[11px] text-slate-400">Followers</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-base font-black text-white">{profileData.following}</div>
-                  <div className="text-[11px] text-slate-400">Following</div>
-                </div>
-              </div>
+              {onMessageUser && currentUser && (
+                <button
+                  onClick={() => onMessageUser(viewingUserId)}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 border border-slate-700 text-slate-200 hover:bg-slate-700 transition"
+                >
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  Message
+                </button>
+              )}
             </div>
           </div>
-
-          {/* Join date row */}
-          <div className="flex items-center gap-2 text-xs text-slate-400 border-t border-slate-800/80 pt-4">
-            <Calendar className="w-3.5 h-3.5 text-purple-400" />
-            Member since {profileData.joinedDate}
-            <span className="mx-1">•</span>
-            <Globe className="w-3.5 h-3.5 text-emerald-400" />
-            Public Profile
-          </div>
-        </div>
-
-        {/* Posts Grid */}
-        <div className="glass-card rounded-3xl border border-slate-800 overflow-hidden">
-          <div className="p-4 border-b border-slate-800 flex items-center gap-2 text-xs font-bold text-slate-300">
-            <Grid3x3 className="w-4 h-4 text-purple-400" />
-            Featured Works
-          </div>
-
-          {creatorPosts.length === 0 ? (
-            <div className="p-10 text-center text-xs text-slate-500">
-              No public posts yet.
-            </div>
-          ) : (
-            <div className="grid grid-cols-3 gap-0.5 bg-slate-800/40">
-              {(Array.isArray(creatorPosts) && typeof creatorPosts[0] === 'string'
-                ? creatorPosts
-                : creatorPosts.map(p => p.media?.[0]?.url).filter(Boolean)
-              ).map((url, i) => (
-                <div key={i} className="aspect-square overflow-hidden bg-slate-900 group cursor-pointer">
-                  <img
-                    src={url}
-                    alt={`Post ${i + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     );
@@ -303,10 +143,15 @@ export function ProfileView({ currentUser, viewingUserId, userPosts, onDeletePos
       {/* Profile Header */}
       <div className="glass-panel p-6 rounded-3xl border border-slate-800">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-          <img
-            src={currentUser?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200'}
-            alt={currentUser?.display_name}
-            className="w-24 h-24 rounded-full object-cover ring-4 ring-purple-500/30 shadow-xl"
+          <Avatar
+            src={localAvatar}
+            userId={currentUser?.id}
+            displayName={currentUser?.display_name}
+            username={currentUser?.username}
+            size="xl"
+            editable={true}
+            onAvatarChange={handleAvatarChange}
+            ring="ring-purple-500/30"
           />
 
           <div className="flex-1 space-y-2">
@@ -317,7 +162,7 @@ export function ProfileView({ currentUser, viewingUserId, userPosts, onDeletePos
               </div>
               <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-end">
                 <span className="inline-block px-3 py-1 bg-purple-500/10 text-purple-300 border border-purple-500/20 rounded-full text-xs font-semibold">
-                  Tier: {currentUser?.tier || 'Artisan'}
+                  Tier: {currentUser?.tier || 'Novice'}
                 </span>
                 {currentUser?.gender && (
                   <span className="inline-block px-3 py-1 bg-slate-800 text-slate-300 border border-slate-700 rounded-full text-xs">
@@ -328,13 +173,13 @@ export function ProfileView({ currentUser, viewingUserId, userPosts, onDeletePos
             </div>
 
             <p className="text-xs text-slate-300 max-w-xl">
-              {currentUser?.bio || 'Digital creator testing AURA beta.'}
+              {currentUser?.bio || 'No bio yet. Add one below!'}
             </p>
 
             <div className="flex items-center justify-center sm:justify-start gap-4 text-xs text-slate-400 pt-2">
               <span className="flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-purple-400" />
-                Beta Member since Nov 2026
+                Member since {new Date().toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
               </span>
               <span className="flex items-center gap-1.5">
                 {isPrivate ? <Lock className="w-3.5 h-3.5 text-amber-400" /> : <Globe className="w-3.5 h-3.5 text-emerald-400" />}
@@ -353,6 +198,16 @@ export function ProfileView({ currentUser, viewingUserId, userPosts, onDeletePos
         </h3>
 
         <form onSubmit={handleSave} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Display Name</label>
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-purple-500 transition"
+            />
+          </div>
+
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1">Bio</label>
             <textarea
@@ -391,7 +246,7 @@ export function ProfileView({ currentUser, viewingUserId, userPosts, onDeletePos
           </div>
           <div className="grid grid-cols-3 gap-0.5 bg-slate-800/40">
             {userPosts.map((post) => {
-              const imgUrl = post.media?.[0]?.url || post.thumbnailUrl;
+              const imgUrl = post.media?.[0]?.url || post.thumbnailUrl || post.mediaAsset?.url;
               return imgUrl ? (
                 <div key={post.id} className="aspect-square overflow-hidden bg-slate-900 group cursor-pointer">
                   <img

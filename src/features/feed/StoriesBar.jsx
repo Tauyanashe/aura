@@ -1,48 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, X, Heart, Send, Sparkles } from 'lucide-react';
+import { Avatar } from '../../components/common/Avatar';
 
-const MOCK_STORIES = [
-  {
-    id: 's-elena',
-    username: 'elena_v',
-    displayName: 'Elena Rostova',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
-    mediaUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1080',
-    caption: 'Synthesizer patch testing in the studio 🎹✨',
-    timeAgo: '2h ago',
-    unseen: true,
-  },
-  {
-    id: 's-sylvia',
-    username: 'sylvia_art',
-    displayName: 'Sylvia Chen',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-    mediaUrl: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=1080',
-    caption: 'Tokyo rain reflections through 35mm lens 🌧️',
-    timeAgo: '4h ago',
-    unseen: true,
-  },
-  {
-    id: 's-marcus',
-    username: 'marcus_k',
-    displayName: 'Marcus Thorne',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-    mediaUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1080',
-    caption: 'Procedural 3D fluid simulations render complete!',
-    timeAgo: '7h ago',
-    unseen: false,
-  },
-  {
-    id: 's-tapiwa',
-    username: 'tapiwa_dev',
-    displayName: 'Tapiwa Moyo',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
-    mediaUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1080',
-    caption: 'Satellite telemetry visualization pipeline 🛰️',
-    timeAgo: '11h ago',
-    unseen: false,
-  },
-];
+// No hardcoded stories — will be populated by real user activity
+const MOCK_STORIES = [];
 
 export function StoriesBar({ currentUser, onOpenCreatePost }) {
   const [activeStory, setActiveStory] = useState(null);
@@ -87,10 +48,13 @@ export function StoriesBar({ currentUser, onOpenCreatePost }) {
             className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group"
           >
             <div className="relative">
-              <img
-                src={currentUser?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100'}
-                alt="My Story"
-                className="w-14 h-14 rounded-full object-cover p-0.5 border border-slate-700/80 group-hover:scale-105 transition-transform"
+              <Avatar
+                src={currentUser?.avatar}
+                userId={currentUser?.id}
+                displayName={currentUser?.display_name}
+                username={currentUser?.username}
+                size="lg"
+                ring="ring-slate-700/80"
               />
               <div className="absolute bottom-0 right-0 w-4 h-4 bg-purple-600 rounded-full flex items-center justify-center border-2 border-slate-950 text-white shadow-md">
                 <Plus className="w-3 h-3 stroke-[3]" />

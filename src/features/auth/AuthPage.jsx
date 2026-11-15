@@ -179,29 +179,6 @@ function SignInTab({ onLoginSuccess, setTab }) {
           </button>
         </div>
       </div>
-
-      {/* Quick Access for Beta Testing */}
-      <div className="pt-2 border-t border-slate-800/80">
-        <span className="text-[10px] text-slate-500 font-medium block text-center mb-1.5">
-          Quick Demo Credentials:
-        </span>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => { setEmail('elena@aura.network'); setPassword('aura2026!'); }}
-            className="flex-1 py-1.5 px-2 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-purple-300 hover:border-purple-500/40 transition"
-          >
-            Elena (Creator)
-          </button>
-          <button
-            type="button"
-            onClick={() => { setEmail('moderator@aura.network'); setPassword('aura2026!'); }}
-            className="flex-1 py-1.5 px-2 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-amber-300 hover:border-amber-500/40 transition"
-          >
-            Staff Mod
-          </button>
-        </div>
-      </div>
     </form>
   );
 }

@@ -38,11 +38,17 @@ export function ShareModal({ isOpen, onClose, post }) {
       <div className="space-y-4">
         {/* Post Preview Snippet */}
         <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 flex items-center gap-3">
-          <img
-            src={post.mediaAsset?.url || post.mediaAsset?.dataUrl || 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=100'}
-            alt="Preview"
-            className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
-          />
+          {post.mediaAsset?.url || post.mediaAsset?.dataUrl ? (
+            <img
+              src={post.mediaAsset.url || post.mediaAsset.dataUrl}
+              alt="Preview"
+              className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-lg bg-purple-900/30 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+              <Share2 className="w-5 h-5 text-purple-400" />
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <span className="text-xs font-semibold text-slate-200 block truncate">
               {post.caption || 'AURA Media Post'}
