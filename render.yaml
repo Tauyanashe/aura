@@ -16,4 +16,4 @@ services:
       - key: VITE_SUPABASE_ANON_KEY
         sync: false
       - key: VITE_STORAGE_MODE
-        value: mock
+        sync: false

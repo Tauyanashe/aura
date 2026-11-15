@@ -13,9 +13,6 @@ function safeRemove(key) {
   try { if (typeof window !== 'undefined' && window.localStorage) localStorage.removeItem(key); } catch { /* ignore */ }
 }
 
-// No hardcoded demo users — all accounts are real user registrations
-const DEMO_USERS = [];
-
 export const authService = {
   async getCurrentSession() {
     if (isMockMode) {
@@ -40,9 +37,14 @@ export const authService = {
         .eq('id', session.user.id)
         .single();
 
+      const googleAvatar = session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture;
+
       return {
         id: session.user.id,
         email: session.user.email,
+        username: profile?.username || session.user.email.split('@')[0],
+        display_name: profile?.display_name || session.user.user_metadata?.full_name || session.user.email.split('@')[0],
+        avatar: profile?.avatar_url || googleAvatar || null,
         ...profile,
         role: profile?.user_roles?.[0]?.role || 'user',
       };
@@ -54,7 +56,6 @@ export const authService = {
 
   async login(email, password) {
     if (isMockMode) {
-      // In mock mode, any email/password combo creates or retrieves a session
       const existing = safeGet(MOCK_STORAGE_KEY);
       if (existing) {
         try {
@@ -86,6 +87,37 @@ export const authService = {
     return this.getCurrentSession();
   },
 
+  async loginWithGoogle() {
+    if (isMockMode) {
+      const googleUser = {
+        id: 'google-user-' + Math.random().toString(36).substring(2, 9),
+        email: 'creator@gmail.com',
+        username: 'google_creator',
+        display_name: 'Google Creator',
+        avatar: null,
+        bio: 'Joined with Google',
+        is_private: false,
+        role: 'user',
+        balance: 100,
+        auraScore: 100,
+        tier: 'Novice',
+        farms: [],
+        gender: 'other',
+      };
+      safeSet(MOCK_STORAGE_KEY, JSON.stringify(googleUser));
+      return googleUser;
+    }
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+    if (error) throw error;
+    return data;
+  },
+
   async register(email, password, username, displayName, gender) {
     if (isMockMode) {
       const newUser = {
@@ -97,7 +129,7 @@ export const authService = {
         bio: '',
         is_private: false,
         role: 'user',
-        balance: 100, // 100 AP Welcome Bonus
+        balance: 100,
         auraScore: 100,
         tier: 'Novice',
         farms: [],
