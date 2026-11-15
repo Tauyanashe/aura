@@ -1,7 +1,39 @@
-node_modules
-dist
-dist-ssr
-*.local
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build Output
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+
+# Environment Variables & Secrets
 .env
 .env.production
+.env.staging
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Test and Coverage
+coverage/
+*.lcov
+
+# Logs and Runtime
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# System & OS
 .DS_Store
+Thumbs.db
+
+# IDE & Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

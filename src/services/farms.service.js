@@ -83,7 +83,7 @@ export const farmsService = {
     };
   },
 
-  async acquireSimulatedFarm(userId, farmSlug) {
+  async acquireFarm(userId, farmSlug) {
     const farm = FARMS_CATALOGUE.find(f => f.slug === farmSlug);
     if (!farm) throw new Error('Farm not found');
 
@@ -110,5 +110,9 @@ export const farmsService = {
 
     if (error) throw error;
     return { success: true, farm: data };
+  },
+
+  async acquireSimulatedFarm(userId, farmSlug) {
+    return this.acquireFarm(userId, farmSlug);
   },
 };

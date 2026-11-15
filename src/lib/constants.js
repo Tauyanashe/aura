@@ -38,7 +38,7 @@ export const FARMS_CATALOGUE = [
     storageLimitBytes: 2 * 1024 * 1024 * 1024, // 2 GB
     storageFormatted: '2 GB',
     isFreeTier: false,
-    features: ['30 posts per month', '2 GB Drive Storage', 'Priority Stream Bandwidth', 'Pioneer Badge', 'Simulated Beta Purchase'],
+    features: ['30 posts per month', '2 GB Drive Storage', 'Priority Stream Bandwidth', 'Pioneer Badge', 'Instant Cloud Activation'],
   },
   {
     id: 'farm-creator-pro',
@@ -50,7 +50,7 @@ export const FARMS_CATALOGUE = [
     storageLimitBytes: 10 * 1024 * 1024 * 1024, // 10 GB
     storageFormatted: '10 GB',
     isFreeTier: false,
-    features: ['150 posts per month', '10 GB Drive Storage', 'Short Video Support', 'Pro Creator Flair', 'Simulated Beta Purchase'],
+    features: ['150 posts per month', '10 GB Drive Storage', 'Short Video Support', 'Pro Creator Flair', 'Instant Cloud Activation'],
   },
 ];
 

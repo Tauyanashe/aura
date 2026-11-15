@@ -45,10 +45,7 @@ export const authService = {
           // fallback
         }
       }
-      // Return Elena as default demo user
-      const defaultUser = DEMO_USERS[0];
-      localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(defaultUser));
-      return defaultUser;
+      return null;
     }
 
     const { data: { session }, error } = await supabase.auth.getSession();

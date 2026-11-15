@@ -62,7 +62,7 @@ export function FarmsView({ catalogue, farmStatus, onAcquireFarm }) {
         <div>
           <h3 className="text-lg font-bold text-white">Virtual Farm Catalogue</h3>
           <p className="text-xs text-slate-400">
-            Choose a farm capacity that suits your publishing frequency. Transactions are simulated for the private beta.
+            Choose a farm capacity that suits your publishing frequency and storage requirements.
           </p>
         </div>
 

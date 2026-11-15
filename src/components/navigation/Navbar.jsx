@@ -8,7 +8,6 @@ export function Navbar({
   onOpenCreatePost,
   activeTab,
   setActiveTab,
-  onSwitchDemo,
   onOpenNotifications,
   onLogout,
   unreadNotificationsCount = 2,
@@ -121,31 +120,41 @@ export function Navbar({
             New Post
           </Button>
 
-          {/* Role Persona Switcher & Sign Out */}
-          <div className="flex items-center gap-1.5 border-l border-slate-800 pl-2">
-            <button
-              onClick={() =>
-                onSwitchDemo(currentUser?.role === 'admin' ? 'elena@aura.network' : 'moderator@aura.network')
-              }
-              className="text-[11px] text-slate-400 hover:text-purple-300 px-2 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-1.5"
-              title="Toggle between regular user and admin/moderator persona"
-            >
-              <UserCheck className="w-3.5 h-3.5 text-purple-400" />
-              <span className="hidden sm:inline">Role:</span>
-              <strong className="text-purple-400 uppercase font-black">{currentUser?.role || 'user'}</strong>
-            </button>
-
-            {onLogout && (
+          {/* User Account & Sign Out */}
+          {currentUser && (
+            <div className="flex items-center gap-1.5 sm:gap-2 border-l border-slate-800 pl-2">
               <button
-                onClick={onLogout}
-                className="text-[11px] text-slate-400 hover:text-rose-400 p-2 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center transition"
-                title="Sign Out"
-                aria-label="Sign Out"
+                onClick={() => setActiveTab('profile')}
+                className="flex items-center gap-2 p-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500/40 transition group"
+                title="View your profile"
               >
-                <LogOut className="w-3.5 h-3.5" />
+                <img
+                  src={currentUser.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60'}
+                  alt={currentUser.display_name}
+                  className="w-6 h-6 rounded-full object-cover ring-1 ring-purple-500/30 group-hover:ring-purple-400 transition"
+                />
+                <span className="hidden sm:inline text-xs font-semibold text-slate-200 group-hover:text-purple-300 transition truncate max-w-[100px]">
+                  {currentUser.display_name || currentUser.username}
+                </span>
+                {currentUser.role && currentUser.role !== 'user' && (
+                  <span className="hidden md:inline text-[9px] uppercase font-black px-1.5 py-0.2 bg-purple-500/20 text-purple-300 rounded border border-purple-500/30">
+                    {currentUser.role}
+                  </span>
+                )}
               </button>
-            )}
-          </div>
+
+              {onLogout && (
+                <button
+                  onClick={onLogout}
+                  className="text-slate-400 hover:text-rose-400 p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-rose-500/40 flex items-center justify-center transition"
+                  title="Sign Out"
+                  aria-label="Sign Out"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -1,0 +1,19 @@
+services:
+  # AURA Web Application (Node.js SPA Production Server)
+  - type: web
+    name: aura-platform
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+      - key: VITE_STORAGE_MODE
+        value: mock

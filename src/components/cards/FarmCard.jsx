@@ -78,7 +78,7 @@ export function FarmCard({ farm, isOwned, onAcquire }) {
             className="w-full"
             onClick={() => onAcquire(farm.slug)}
           >
-            Claim Farm (Simulated)
+            Activate Farm Capacity
           </Button>
         )}
       </div>

@@ -271,23 +271,10 @@ export function App() {
         onOpenCreatePost={() => setCreatePostOpen(true)}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onSwitchDemo={handleSwitchDemo}
         onOpenNotifications={() => setNotificationsOpen(true)}
         onLogout={handleLogout}
         unreadNotificationsCount={2}
       />
-
-      {/* Quick link banner */}
-      <div className="bg-slate-900/60 border-b border-slate-800/60 py-1.5 px-4 text-center text-[11px] text-slate-400 flex items-center justify-center gap-2">
-        <span>AURA Private Beta Platform</span>
-        <span>•</span>
-        <button
-          onClick={() => setViewMode('landing')}
-          className="text-purple-400 hover:text-purple-300 font-semibold underline underline-offset-2"
-        >
-          View Rising Aura Royalty &amp; Rankings
-        </button>
-      </div>
 
       {/* Main Container */}
       <div className="max-w-7xl mx-auto w-full px-2 sm:px-4 lg:px-8 py-3 sm:py-6 lg:py-8 flex justify-center gap-3 sm:gap-4 lg:gap-8 flex-1 pb-24 sm:pb-8 safe-area-x">
