@@ -21,6 +21,8 @@ import { NotificationsDrawer } from '../features/notifications/NotificationsDraw
 import { LandingPage } from '../features/landing/LandingPage';
 import { AuthPage } from '../features/auth/AuthPage';
 import { ChatView } from '../features/chat/ChatView';
+import { Avatar } from '../components/common/Avatar';
+import { Image as ImageIcon, Film, Camera, Plus, Sparkles } from 'lucide-react';
 import { authService } from '../services/auth.service';
 import { postsService } from '../services/posts.service';
 import { farmsService } from '../services/farms.service';
@@ -306,6 +308,42 @@ export function App() {
                 onOpenCreatePost={() => setCreatePostOpen(true)}
               />
 
+              {/* Instagram / TikTok Quick Post Composer */}
+              <div
+                onClick={() => setCreatePostOpen(true)}
+                className="glass-card p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-slate-800/80 hover:border-purple-500/40 cursor-pointer transition shadow-lg space-y-3 group"
+              >
+                <div className="flex items-center gap-3">
+                  <Avatar
+                    src={currentUser?.avatar}
+                    userId={currentUser?.id}
+                    displayName={currentUser?.display_name}
+                    username={currentUser?.username}
+                    size="sm"
+                    ring="ring-purple-500/30 group-hover:ring-purple-400"
+                  />
+                  <div className="flex-1 bg-slate-900/80 border border-slate-800 rounded-full px-4 py-2.5 text-xs text-slate-400 group-hover:text-slate-200 group-hover:border-slate-700 transition">
+                    What's on your mind? Share a photo or video...
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-slate-800/60 text-xs">
+                  <div className="flex items-center gap-4 text-slate-400">
+                    <span className="flex items-center gap-1.5 hover:text-purple-400 transition font-medium">
+                      <ImageIcon className="w-4 h-4 text-pink-400" />
+                      Photo
+                    </span>
+                    <span className="flex items-center gap-1.5 hover:text-purple-400 transition font-medium">
+                      <Film className="w-4 h-4 text-purple-400" />
+                      Video / Reel
+                    </span>
+                  </div>
+                  <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white shadow-sm shadow-purple-600/30 group-hover:scale-105 transition-transform">
+                    Post (+25 AP)
+                  </span>
+                </div>
+              </div>
+
               {/* Feed Filter Header */}
               <div className="glass-card p-2 sm:p-3 flex items-center justify-between rounded-2xl">
                 <div className="flex gap-1.5 sm:gap-2">
@@ -337,8 +375,44 @@ export function App() {
 
               {/* Feed Posts */}
               {posts.length === 0 ? (
-                <div className="p-12 text-center text-xs text-slate-400 glass-card rounded-2xl">
-                  No posts yet in this feed. Tap (+) to create the first post!
+                <div className="glass-card p-8 sm:p-12 text-center rounded-3xl border border-slate-800 space-y-5">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-3xl bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 p-0.5 shadow-xl shadow-purple-600/30 flex items-center justify-center">
+                    <div className="w-full h-full bg-slate-950 rounded-[22px] flex items-center justify-center">
+                      <Camera className="w-10 h-10 text-purple-400" strokeWidth={1.75} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 max-w-md mx-auto">
+                    <h3 className="text-lg sm:text-xl font-black text-white">
+                      Welcome to your Feed!
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                      No posts have been shared yet. Be the first to share a photo or video and earn +25 Aura Points!
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => setCreatePostOpen(true)}
+                    className="px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:opacity-95 text-white font-bold text-xs sm:text-sm shadow-xl shadow-purple-600/30 transition transform hover:scale-105 active:scale-95 inline-flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Create First Post
+                  </button>
+
+                  <div className="pt-4 border-t border-slate-800/80 grid grid-cols-3 gap-2 max-w-sm mx-auto text-[11px] text-slate-400">
+                    <div className="text-center">
+                      <span className="block font-bold text-white text-xs">+25 AP</span>
+                      <span>Per Post</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="block font-bold text-white text-xs">100% Free</span>
+                      <span>Farm Storage</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="block font-bold text-white text-xs">High Trust</span>
+                      <span>Reputation</span>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 posts.map((post) => (
