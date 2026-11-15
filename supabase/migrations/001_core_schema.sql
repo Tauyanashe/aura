@@ -32,6 +32,7 @@ create table if not exists public.profiles (
     display_name text not null check (char_length(trim(display_name)) between 1 and 60),
     bio text default '' check (char_length(bio) <= 300),
     avatar_media_id uuid,
+    avatar_url text,
     is_private boolean not null default false,
     is_banned boolean not null default false,
     created_at timestamptz not null default now(),

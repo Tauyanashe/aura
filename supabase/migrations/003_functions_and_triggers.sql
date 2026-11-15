@@ -705,16 +705,20 @@ begin
         id,
         username,
         display_name,
+        avatar_url,
         bio,
         is_private
     ) values (
         new.id,
         v_clean_username,
-        coalesce(new.raw_user_meta_data->>'display_name', initcap(split_part(v_clean_username, '_', 1))),
-        'AURA beta tester',
+        coalesce(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name', new.raw_user_meta_data->>'display_name', initcap(split_part(v_clean_username, '_', 1))),
+        coalesce(new.raw_user_meta_data->>'avatar_url', new.raw_user_meta_data->>'picture'),
+        'AURA creator',
         false
     )
-    on conflict (id) do nothing;
+    on conflict (id) do update set
+        avatar_url = coalesce(excluded.avatar_url, profiles.avatar_url),
+        display_name = coalesce(excluded.display_name, profiles.display_name);
 
     -- Assign default user role
     insert into public.user_roles (user_id, role)

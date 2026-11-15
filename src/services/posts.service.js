@@ -48,7 +48,7 @@ export const postsService = {
       .from('posts')
       .select(`
         *,
-        profiles!posts_user_id_fkey(id, username, display_name, avatar_media_id),
+        profiles!posts_user_id_fkey(id, username, display_name, avatar_media_id, avatar_url),
         media_assets(*),
         likes(user_id),
         ratings(user_id, score)
@@ -66,8 +66,24 @@ export const postsService = {
 
     return (data || []).map(p => ({
       ...p,
-      author: p.profiles,
-      mediaAsset: p.media_assets?.[0],
+      id: p.id,
+      userId: p.user_id,
+      caption: p.caption,
+      createdAt: p.published_at || p.created_at,
+      author: {
+        id: p.profiles?.id || p.user_id,
+        username: p.profiles?.username || 'user',
+        displayName: p.profiles?.display_name || p.profiles?.username || 'Creator',
+        avatar: p.profiles?.avatar_url || null,
+        tier: 'Novice',
+      },
+      mediaAsset: p.media_assets?.[0] ? {
+        ...p.media_assets[0],
+        url: p.media_assets[0].drive_file_id || p.media_assets[0].url,
+      } : null,
+      likesCount: p.likes_count || (p.likes ? p.likes.length : 0),
+      ratingsCount: p.ratings_count || (p.ratings ? p.ratings.length : 0),
+      ratingAverage: p.rating_average || 0.0,
       hasLiked: p.likes?.some(l => l.user_id === currentUserId),
       userRating: p.ratings?.find(r => r.user_id === currentUserId)?.score || null,
     }));
