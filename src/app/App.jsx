@@ -1,6 +1,7 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Navbar } from '../components/navigation/Navbar';
 import { Sidebar } from '../components/navigation/Sidebar';
+import { RightSidebar } from '../components/navigation/RightSidebar';
 import { MobileBottomNav } from '../components/navigation/MobileBottomNav';
 import { StoriesBar } from '../features/feed/StoriesBar';
 import { PostCard } from '../components/cards/PostCard';
@@ -247,6 +248,14 @@ export function App() {
   }
 
   // ─── MAIN APP ─────────────────────────────────────────────────────────────
+  const isFullWidthTab = ['chat', 'explore', 'farms', 'analytics'].includes(activeTab);
+  const isFeedTab = ['feed', 'saved'].includes(activeTab);
+  const stageWidthClass = isFullWidthTab
+    ? 'flex-1 max-w-5xl min-w-0 space-y-5'
+    : isFeedTab
+    ? 'w-full max-w-[620px] min-w-0 space-y-5 flex-shrink-0'
+    : 'flex-1 max-w-3xl min-w-0 space-y-5';
+
   return (
     <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col selection:bg-purple-500 selection:text-white">
       {/* Toast Notification */}
@@ -281,7 +290,7 @@ export function App() {
       </div>
 
       {/* Main Container */}
-      <div className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-8 flex gap-8 flex-1 pb-24 md:pb-8">
+      <div className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-8 flex justify-center gap-6 lg:gap-8 flex-1 pb-24 md:pb-8">
         {/* Left Desktop Sidebar */}
         <Sidebar
           activeTab={activeTab}
@@ -291,7 +300,7 @@ export function App() {
         />
 
         {/* Dynamic Center Stage */}
-        <main className="flex-1 max-w-2xl min-w-0 space-y-5 mx-auto">
+        <main className={stageWidthClass}>
           {activeTab === 'feed' && (
             <div className="space-y-4">
               <StoriesBar
@@ -432,6 +441,16 @@ export function App() {
             <ModerationDashboard currentUser={currentUser} />
           )}
         </main>
+
+        {/* Right Desktop Sidebar (Feed & Saved) */}
+        {isFeedTab && (
+          <RightSidebar
+            onViewProfile={handleViewProfile}
+            setActiveTab={setActiveTab}
+            currentUser={currentUser}
+            onToast={showToast}
+          />
+        )}
       </div>
 
       {/* Mobile Fixed Bottom Navigation Bar */}

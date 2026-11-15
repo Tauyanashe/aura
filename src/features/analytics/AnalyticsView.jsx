@@ -73,41 +73,49 @@ export function AnalyticsView({ currentUser, farmStatus, wallet, auraScore }) {
         </div>
       </div>
 
-      {/* Rating Quality Breakdown (Histogram) */}
-      <div className="glass-card p-6 space-y-4">
-        <h3 className="text-sm font-bold text-slate-100 flex items-center justify-between">
-          <span>Peer Review Rating Distribution</span>
-          <span className="text-xs text-amber-400 font-semibold">93% Positive (4-5 Stars)</span>
-        </h3>
+      {/* Bottom Analytics Section (Side-by-side on desktop) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Rating Quality Breakdown (Histogram) */}
+        <div className="glass-card p-6 space-y-4">
+          <h3 className="text-sm font-bold text-slate-100 flex items-center justify-between">
+            <span>Peer Review Rating Distribution</span>
+            <span className="text-xs text-amber-400 font-semibold">93% Positive</span>
+          </h3>
 
-        <div className="space-y-2.5">
-          {ratingDistribution.map((item) => (
-            <div key={item.stars} className="flex items-center gap-3 text-xs">
-              <span className="w-12 text-slate-400 font-mono font-medium flex items-center gap-1">
-                {item.stars} <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-              </span>
+          <div className="space-y-2.5">
+            {ratingDistribution.map((item) => (
+              <div key={item.stars} className="flex items-center gap-3 text-xs">
+                <span className="w-12 text-slate-400 font-mono font-medium flex items-center gap-1">
+                  {item.stars} <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                </span>
 
-              <div className="flex-1 bg-slate-900 h-2.5 rounded-full overflow-hidden p-0.5 border border-slate-800">
-                <div
-                  className="bg-gradient-to-r from-amber-500 to-purple-500 h-full rounded-full transition-all duration-700"
-                  style={{ width: `${item.percent}%` }}
-                />
+                <div className="flex-1 bg-slate-900 h-2.5 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                  <div
+                    className="bg-gradient-to-r from-amber-500 to-purple-500 h-full rounded-full transition-all duration-700"
+                    style={{ width: `${item.percent}%` }}
+                  />
+                </div>
+
+                <span className="w-10 text-right text-slate-400 font-mono text-[11px]">
+                  {item.percent}%
+                </span>
               </div>
-
-              <span className="w-10 text-right text-slate-400 font-mono text-[11px]">
-                {item.percent}%
-              </span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Storage Utilization & Efficiency */}
-      <div className="glass-card p-6 space-y-3">
-        <h3 className="text-sm font-bold text-slate-100">Farm Storage Efficiency Analysis</h3>
-        <p className="text-xs text-slate-400 leading-relaxed">
-          Your current farm allocation provides <strong>{farmStatus ? Math.round(farmStatus.totalStorageBytes / 1024 / 1024) : 250} MB</strong> of Google Drive cloud storage. With your current publishing compression and average asset size (2.3 MB), you can sustain <strong>{Math.floor((farmStatus?.storageRemainingBytes || 200000000) / (2.3 * 1024 * 1024))} more media assets</strong> before reaching capacity.
-        </p>
+        {/* Storage Utilization & Efficiency */}
+        <div className="glass-card p-6 space-y-3 flex flex-col justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-slate-100 mb-2">Farm Storage Efficiency Analysis</h3>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Your current farm allocation provides <strong className="text-white">{farmStatus ? Math.round(farmStatus.totalStorageBytes / 1024 / 1024) : 250} MB</strong> of Google Drive cloud storage. With current publishing compression and average asset size (2.3 MB), you can sustain <strong className="text-purple-300">{Math.floor((farmStatus?.storageRemainingBytes || 200000000) / (2.3 * 1024 * 1024))} more media assets</strong> before reaching capacity.
+            </p>
+          </div>
+          <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80 text-[11px] text-slate-400">
+            Monthly reset takes place on the 1st of each month UTC.
+          </div>
+        </div>
       </div>
     </div>
   );
