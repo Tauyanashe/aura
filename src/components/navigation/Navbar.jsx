@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sparkles, Coins, PlusCircle, Bell, Search, BarChart3, Bookmark, UserCheck, Shield, LogOut } from 'lucide-react';
 import { Button } from '../common/Button';
+import { AuraLogo } from '../common/AuraLogo';
 
 export function Navbar({
   currentUser,
@@ -17,11 +18,7 @@ export function Navbar({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('feed')}>
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 p-0.5 shadow-lg shadow-purple-500/25 flex items-center justify-center">
-            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-purple-400" />
-            </div>
-          </div>
+          <AuraLogo size="md" />
           <div>
             <div className="flex items-center gap-2">
               <span className="font-black text-xl tracking-tight text-white">AURA</span>

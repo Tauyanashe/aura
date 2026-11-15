@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, Eye, EyeOff, Loader2, ArrowLeft, Mail, Lock, User, AtSign, ChevronDown } from 'lucide-react';
 import { authService } from '../../services/auth.service';
+import { AuraLogo } from '../../components/common/AuraLogo';
 
 // ─── Tab IDs ────────────────────────────────────────────────────────────────
 const TAB_SIGNIN   = 'signin';
@@ -112,11 +113,7 @@ function TabButton({ active, onClick, children }) {
 function Logo() {
   return (
     <div className="flex flex-col items-center gap-3 mb-2">
-      <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 p-0.5 shadow-lg shadow-purple-500/30 flex items-center justify-center">
-        <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-          <Sparkles className="w-7 h-7 text-purple-400" />
-        </div>
-      </div>
+      <AuraLogo size="lg" />
       <div className="flex items-center gap-2">
         <span className="font-black text-2xl tracking-tight text-white">AURA</span>
         <span className="px-2 py-0.5 text-[10px] uppercase font-extrabold tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full">

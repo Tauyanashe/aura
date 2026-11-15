@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { RISING_AURA_KINGS } from './landingData';
 import { Button } from '../../components/common/Button';
+import { AuraLogo } from '../../components/common/AuraLogo';
 
 function getRankTitle(creator, timeframe) {
   if (!creator) return '';
@@ -44,11 +45,7 @@ export function LandingPage({ onEnterApp }) {
       <header className="sticky top-0 z-50 w-full glass-panel border-b border-slate-800/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 p-0.5 shadow-lg shadow-purple-500/25 flex items-center justify-center">
-              <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-purple-400" />
-              </div>
-            </div>
+            <AuraLogo size="md" />
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-black text-xl tracking-tight text-white">AURA</span>
