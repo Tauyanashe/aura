@@ -105,12 +105,12 @@ export function ChatView({ currentUser }) {
   });
 
   return (
-    <div className="glass-panel rounded-3xl border border-slate-800 overflow-hidden h-[calc(100vh-160px)] min-h-[520px] flex flex-col md:flex-row relative">
-      {/* ─── LEFT: Conversation List ───────────────────────────────────── */}
+    <div className="glass-panel rounded-2xl sm:rounded-3xl border border-slate-800 overflow-hidden h-[calc(100dvh-150px)] min-h-[460px] flex flex-col sm:flex-row relative foldable-split-container">
+      {/* ─── LEFT: Conversation List (Dual-pane on foldables & tablets) ── */}
       <div
         className={clsx(
-          'w-full md:w-80 border-r border-slate-800 flex flex-col flex-shrink-0 bg-slate-950/40',
-          activeConversationId ? 'hidden md:flex' : 'flex'
+          'w-full sm:w-64 md:w-72 lg:w-80 border-r border-slate-800 flex flex-col flex-shrink-0 bg-slate-950/40 foldable-left-pane',
+          activeConversationId ? 'hidden sm:flex' : 'flex'
         )}
       >
         {/* Header */}
@@ -208,19 +208,20 @@ export function ChatView({ currentUser }) {
       {/* ─── RIGHT: Active Thread ─────────────────────────────────────── */}
       <div
         className={clsx(
-          'flex-1 flex flex-col bg-slate-900/20',
-          !activeConversationId ? 'hidden md:flex' : 'flex'
+          'flex-1 flex flex-col bg-slate-900/20 foldable-right-pane',
+          !activeConversationId ? 'hidden sm:flex' : 'flex'
         )}
       >
         {activeConversation ? (
           <>
             {/* Thread Header */}
-            <div className="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60 backdrop-blur-md">
-              <div className="flex items-center gap-3">
-                {/* Mobile Back Button */}
+            <div className="p-3 sm:p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60 backdrop-blur-md">
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                {/* Mobile Back Button (only on small phone / cover screen) */}
                 <button
                   onClick={() => setActiveConversationId(null)}
-                  className="md:hidden p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                  className="sm:hidden p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                  aria-label="Back to conversations"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>

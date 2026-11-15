@@ -94,7 +94,7 @@ export function LandingPage({ onEnterApp }) {
             <span>Introducing AURA 2026 Private Beta • Reputation-First Platform</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.1]">
+          <h1 className="text-3xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.1]">
             Where Creator Quality Earns{' '}
             <span className="text-gradient">True Sovereign Aura.</span>
           </h1>

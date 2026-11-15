@@ -79,8 +79,8 @@ export function StoriesBar({ currentUser, onOpenCreatePost }) {
   return (
     <>
       {/* Horizontal Scrolling Stories Strip */}
-      <div className="glass-card p-3 overflow-hidden">
-        <div className="flex items-center gap-3.5 overflow-x-auto no-scrollbar scroll-smooth py-1">
+      <div className="glass-card p-2.5 sm:p-3 overflow-hidden">
+        <div className="flex items-center gap-2.5 sm:gap-3.5 overflow-x-auto no-scrollbar scroll-smooth py-1 touch-pan-x overscroll-contain">
           {/* User's Add Story Bubble */}
           <div
             onClick={onOpenCreatePost}

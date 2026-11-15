@@ -36,7 +36,7 @@ export function MobileBottomNav({
   ];
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-slate-950/90 backdrop-blur-xl border-t border-slate-800/80 px-2 py-1.5 safe-area-bottom">
+    <nav className="fixed bottom-0 inset-x-0 z-50 sm:hidden bg-slate-950/95 backdrop-blur-xl border-t border-slate-800/80 px-1.5 py-1.5 safe-area-bottom pb-[max(0.6rem,env(safe-area-inset-bottom,0px))]">
       <div className="flex items-center justify-around max-w-lg mx-auto">
         {items.map((item) => {
           if (item.isPrimaryAction) {
@@ -44,15 +44,15 @@ export function MobileBottomNav({
               <button
                 key={item.id}
                 onClick={item.onClick}
-                className="relative -top-4 flex flex-col items-center group focus:outline-none"
+                className="relative -top-3.5 flex flex-col items-center group focus:outline-none flex-shrink-0"
                 aria-label="Create Post"
               >
-                <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 p-0.5 shadow-xl shadow-purple-600/40 active:scale-95 transition-transform duration-150 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 p-0.5 shadow-xl shadow-purple-600/40 active:scale-95 transition-transform duration-150 flex items-center justify-center">
                   <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center group-hover:bg-transparent transition-colors">
-                    <Plus className="w-6 h-6 text-white" strokeWidth={2.5} />
+                    <Plus className="w-5 h-5 text-white" strokeWidth={2.5} />
                   </div>
                 </div>
-                <span className="text-[10px] font-bold text-purple-300 mt-1">
+                <span className="text-[9px] sm:text-[10px] font-bold text-purple-300 mt-0.5">
                   {item.postsRemaining} left
                 </span>
               </button>
@@ -67,7 +67,7 @@ export function MobileBottomNav({
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               className={clsx(
-                'flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all relative',
+                'flex flex-col items-center justify-center py-1 px-1.5 sm:px-3 rounded-xl transition-all relative flex-shrink-0',
                 isActive ? 'text-purple-400 font-semibold' : 'text-slate-400 hover:text-slate-200'
               )}
             >

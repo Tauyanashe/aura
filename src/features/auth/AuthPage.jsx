@@ -367,7 +367,7 @@ export function AuthPage({ onLoginSuccess, onBack }) {
         </button>
       )}
 
-      <div className="glass-card rounded-3xl p-8 w-full max-w-md space-y-6 border border-slate-800">
+      <div className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-8 w-full max-w-md space-y-5 sm:space-y-6 border border-slate-800 my-auto">
         {/* Logo */}
         <Logo />
 

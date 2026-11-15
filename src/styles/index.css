@@ -8,6 +8,12 @@
   --accent-purple: #8b5cf6;
   --accent-pink: #ec4899;
   --accent-amber: #f59e0b;
+
+  /* Safe Area Insets for Foldables, Notches & Cutouts */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
 }
 
 body {
@@ -16,7 +22,60 @@ body {
   background-color: var(--bg-primary);
   color: #f8fafc;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+
+/* ─── Safe Area Helpers ─────────────────────────────────────────────────── */
+.safe-area-top {
+  padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
+}
+
+.safe-area-bottom {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+}
+
+/* ─── Foldable Devices Optimizations ────────────────────────────────────── */
+
+/* Book-Style Dual-Screen Unfolded (e.g. Pixel Fold, Galaxy Z Fold, Surface Duo) */
+@media (horizontal-viewport-segments: 2), (spanning: single-fold-vertical) {
+  .foldable-split-container {
+    display: flex !important;
+    flex-direction: row !important;
+  }
+  .foldable-left-pane {
+    width: env(viewport-segment-width 0 0, 50%) !important;
+    flex-shrink: 0 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .foldable-right-pane {
+    width: env(viewport-segment-width 1 0, 50%) !important;
+    flex: 1 1 0% !important;
+    padding-left: max(0.75rem, env(viewport-segment-left 1 0, 0px));
+  }
+}
+
+/* Clamshell Flex Mode / Half-Folded Posture (e.g. Galaxy Z Flip, Razr, Laptop mode) */
+@media (vertical-viewport-segments: 2), (spanning: single-fold-horizontal) {
+  .flex-mode-top {
+    max-height: env(viewport-segment-height 0 0, 50vh) !important;
+    overflow-y: auto !important;
+  }
+  .flex-mode-bottom {
+    min-height: env(viewport-segment-height 0 1, 50vh) !important;
+    overflow-y: auto !important;
+  }
+}
+
+/* Ultra-compact foldable cover screens (e.g. Folded Z Fold 320px–360px) */
+@media (max-width: 360px) {
+  .compact-cover-shrink {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    font-size: 0.8125rem !important;
+  }
 }
 
 /* Glassmorphism surfaces */

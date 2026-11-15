@@ -290,7 +290,7 @@ export function App() {
       </div>
 
       {/* Main Container */}
-      <div className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-8 flex justify-center gap-6 lg:gap-8 flex-1 pb-24 md:pb-8">
+      <div className="max-w-7xl mx-auto w-full px-2 sm:px-4 lg:px-8 py-3 sm:py-6 lg:py-8 flex justify-center gap-3 sm:gap-4 lg:gap-8 flex-1 pb-24 sm:pb-8 safe-area-x">
         {/* Left Desktop Sidebar */}
         <Sidebar
           activeTab={activeTab}
