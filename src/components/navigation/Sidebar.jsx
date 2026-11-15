@@ -10,7 +10,8 @@ import {
   User,
   Database,
   BarChart3,
-  Bookmark
+  Bookmark,
+  MessageSquare
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -21,6 +22,7 @@ export function Sidebar({ activeTab, setActiveTab, currentUser, farmStatus }) {
     { id: 'farms', label: 'Virtual Farms', icon: Layers, badge: `${farmStatus?.postsRemaining ?? 3} left` },
     { id: 'analytics', label: 'Creator Analytics', icon: BarChart3 },
     { id: 'saved', label: 'Saved Collections', icon: Bookmark },
+    { id: 'chat', label: 'Messages', icon: MessageSquare },
     { id: 'wallet', label: 'AP Wallet', icon: Coins },
     { id: 'score', label: 'Aura Score', icon: Sparkles },
     { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
@@ -94,7 +96,7 @@ export function Sidebar({ activeTab, setActiveTab, currentUser, farmStatus }) {
 
         {/* Beta Status Badge */}
         <div className="p-3 text-[11px] text-slate-400 text-center border border-slate-800/60 rounded-2xl glass-panel">
-          Google Drive Beta Storage Adapter active. Zero budget testing tier.
+          AURA Private Beta • Secure Drive Storage Active
         </div>
       </div>
     </aside>

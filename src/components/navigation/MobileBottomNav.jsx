@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Compass, Plus, Layers, User, Coins, BarChart3, Bell } from 'lucide-react';
+import { Home, Compass, Plus, MessageSquare, User } from 'lucide-react';
 import clsx from 'clsx';
 
 export function MobileBottomNav({
@@ -22,10 +22,10 @@ export function MobileBottomNav({
       postsRemaining: farmStatus?.postsRemaining ?? 3,
     },
     {
-      id: 'farms',
-      label: 'Farms',
-      icon: Layers,
-      badge: farmStatus?.postsRemaining !== undefined ? `${farmStatus.postsRemaining}` : null,
+      id: 'chat',
+      label: 'Chat',
+      icon: MessageSquare,
+      badge: unreadCount > 0 ? `${unreadCount}` : null,
     },
     {
       id: 'profile',

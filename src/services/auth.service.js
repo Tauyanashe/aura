@@ -16,6 +16,7 @@ const DEMO_USERS = [
     auraScore: 780,
     tier: 'Artisan',
     farms: ['farm-pioneer'],
+    gender: 'female',
   },
   {
     id: 'user-admin-002',
@@ -29,6 +30,7 @@ const DEMO_USERS = [
     auraScore: 2450,
     tier: 'Legend',
     farms: ['farm-creator-pro'],
+    gender: 'male',
   },
 ];
 
@@ -90,7 +92,7 @@ export const authService = {
     return this.getCurrentSession();
   },
 
-  async register(email, password, username, displayName) {
+  async register(email, password, username, displayName, gender) {
     if (isMockMode) {
       const newUser = {
         id: 'user-' + Math.random().toString(36).substring(2, 9),
@@ -104,6 +106,7 @@ export const authService = {
         auraScore: 100,
         tier: 'Novice',
         farms: ['farm-free'],
+        gender: gender || 'other',
       };
       localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(newUser));
       return newUser;
@@ -113,11 +116,23 @@ export const authService = {
       email,
       password,
       options: {
-        data: { username, display_name: displayName },
+        data: { username, display_name: displayName, gender },
       },
     });
     if (error) throw error;
     return data.user;
+  },
+
+  async forgotPassword(email) {
+    if (isMockMode) {
+      await new Promise(r => setTimeout(r, 1000));
+      return { success: true };
+    }
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/reset-password',
+    });
+    if (error) throw error;
+    return { success: true };
   },
 
   async switchDemoAccount(targetEmail) {

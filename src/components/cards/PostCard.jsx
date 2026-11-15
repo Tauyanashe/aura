@@ -24,6 +24,7 @@ export function PostCard({
   onReport,
   onShare,
   onBookmark,
+  onViewProfile,
   isBookmarked = false,
 }) {
   const [showComments, setShowComments] = useState(false);
@@ -71,12 +72,15 @@ export function PostCard({
     <article className="glass-card overflow-hidden border border-slate-800/80 transition-all hover:border-slate-700/80 rounded-2xl sm:rounded-3xl shadow-xl shadow-black/20">
       {/* Post Author Bar */}
       <div className="p-3.5 sm:p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div
+          className="flex items-center gap-3 cursor-pointer group"
+          onClick={() => onViewProfile && onViewProfile(post.userId)}
+        >
           <div className="relative">
             <img
               src={post.author?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
               alt={post.author?.displayName}
-              className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-500/30 p-0.5 bg-slate-900"
+              className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-500/30 group-hover:ring-purple-400 p-0.5 bg-slate-900 transition"
             />
             {post.author?.tier === 'Legend' && (
               <span className="absolute -bottom-1 -right-1 text-[10px]">✨</span>
@@ -85,7 +89,7 @@ export function PostCard({
 
           <div>
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="font-bold text-xs sm:text-sm text-slate-100 hover:text-purple-400 transition cursor-pointer">
+              <span className="font-bold text-xs sm:text-sm text-slate-100 group-hover:text-purple-400 transition">
                 {post.author?.displayName}
               </span>
               <span className="text-[11px] text-slate-400">@{post.author?.username}</span>

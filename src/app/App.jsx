@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Navbar } from '../components/navigation/Navbar';
 import { Sidebar } from '../components/navigation/Sidebar';
 import { MobileBottomNav } from '../components/navigation/MobileBottomNav';
@@ -18,13 +18,20 @@ import { ReportModal } from '../features/moderation/ReportModal';
 import { ShareModal } from '../components/common/ShareModal';
 import { NotificationsDrawer } from '../features/notifications/NotificationsDrawer';
 import { LandingPage } from '../features/landing/LandingPage';
+import { AuthPage } from '../features/auth/AuthPage';
+import { ChatView } from '../features/chat/ChatView';
 import { authService } from '../services/auth.service';
 import { postsService } from '../services/posts.service';
 import { farmsService } from '../services/farms.service';
 import { auraService } from '../services/aura.service';
 
+// ─── View mode states ───────────────────────────────────────────────────────
+// 'landing' → public landing/rankings page
+// 'auth'    → sign in / sign up / password recovery
+// 'app'     → main authenticated app shell
+
 export function App() {
-  const [viewMode, setViewMode] = useState('landing'); // 'landing' or 'app'
+  const [viewMode, setViewMode] = useState('landing');
   const [currentUser, setCurrentUser] = useState(null);
   const [activeTab, setActiveTab] = useState('feed');
   const [feedFilter, setFeedFilter] = useState('latest');
@@ -44,12 +51,15 @@ export function App() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
+  // Public profile viewer — clicking another user's name/avatar
+  const [viewingProfileUser, setViewingProfileUser] = useState(null);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 3500);
   };
 
-  // Initialize session and data
+  // ─── Data loading ─────────────────────────────────────────────────────────
   const loadUserData = async (user) => {
     if (!user) return;
     try {
@@ -70,12 +80,44 @@ export function App() {
     }
   };
 
+  // On mount: check for existing session — skip landing if already logged in
   useEffect(() => {
     authService.getCurrentSession().then((user) => {
-      setCurrentUser(user);
-      loadUserData(user);
+      if (user) {
+        setCurrentUser(user);
+        setViewMode('app');
+        loadUserData(user);
+      }
+      // Otherwise stay on landing
     });
-  }, [feedFilter]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reload feed when filter changes (only while in app)
+  useEffect(() => {
+    if (currentUser && viewMode === 'app') {
+      postsService.getFeed(currentUser.id, feedFilter).then(setPosts).catch(console.error);
+    }
+  }, [feedFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ─── Auth handlers ────────────────────────────────────────────────────────
+  const handleLoginSuccess = async (user) => {
+    setCurrentUser(user);
+    setViewMode('app');
+    await loadUserData(user);
+    showToast(`Welcome back, ${user.display_name}! 🌟`);
+  };
+
+  const handleLogout = async () => {
+    await authService.logout();
+    setCurrentUser(null);
+    setPosts([]);
+    setFarmStatus(null);
+    setWallet(null);
+    setAuraScore(null);
+    setActiveTab('feed');
+    setViewMode('landing');
+    showToast('Signed out successfully.');
+  };
 
   const handleSwitchDemo = async (email) => {
     const user = await authService.switchDemoAccount(email);
@@ -84,6 +126,7 @@ export function App() {
     showToast(`Switched persona: ${user.display_name} (${user.role})`);
   };
 
+  // ─── Post actions ─────────────────────────────────────────────────────────
   const handlePublish = async (postData) => {
     try {
       await postsService.publishPost({
@@ -163,11 +206,47 @@ export function App() {
     setShareModalOpen(true);
   };
 
-  // Render Landing Page if in landing mode
+  // ─── Profile viewer helper (clicking another user) ────────────────────────
+  const handleViewProfile = (userId) => {
+    // For now, navigate to profile tab with the viewing user context
+    setViewingProfileUser(userId || null);
+    setActiveTab('profile');
+  };
+
+  // ─── LANDING PAGE ─────────────────────────────────────────────────────────
   if (viewMode === 'landing') {
-    return <LandingPage onEnterApp={() => setViewMode('app')} />;
+    return (
+      <>
+        {toastMessage && (
+          <div className="fixed top-6 right-4 z-[200] px-4 py-3 bg-purple-600/90 text-white text-xs font-semibold rounded-2xl shadow-2xl backdrop-blur-md border border-purple-400/30">
+            {toastMessage}
+          </div>
+        )}
+        <LandingPage
+          onEnterApp={() => setViewMode('auth')}
+        />
+      </>
+    );
   }
 
+  // ─── AUTH PAGE ────────────────────────────────────────────────────────────
+  if (viewMode === 'auth') {
+    return (
+      <>
+        {toastMessage && (
+          <div className="fixed top-6 right-4 z-[200] px-4 py-3 bg-purple-600/90 text-white text-xs font-semibold rounded-2xl shadow-2xl backdrop-blur-md border border-purple-400/30">
+            {toastMessage}
+          </div>
+        )}
+        <AuthPage
+          onLoginSuccess={handleLoginSuccess}
+          onBack={() => setViewMode('landing')}
+        />
+      </>
+    );
+  }
+
+  // ─── MAIN APP ─────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col selection:bg-purple-500 selection:text-white">
       {/* Toast Notification */}
@@ -177,7 +256,7 @@ export function App() {
         </div>
       )}
 
-      {/* Top App Bar with Landing toggle */}
+      {/* Top App Bar */}
       <Navbar
         currentUser={currentUser}
         onOpenCreatePost={() => setCreatePostOpen(true)}
@@ -185,10 +264,11 @@ export function App() {
         setActiveTab={setActiveTab}
         onSwitchDemo={handleSwitchDemo}
         onOpenNotifications={() => setNotificationsOpen(true)}
+        onLogout={handleLogout}
         unreadNotificationsCount={2}
       />
 
-      {/* Quick link banner to return to Landing / Kings overview */}
+      {/* Quick link banner */}
       <div className="bg-slate-900/60 border-b border-slate-800/60 py-1.5 px-4 text-center text-[11px] text-slate-400 flex items-center justify-center gap-2">
         <span>AURA Private Beta Platform</span>
         <span>•</span>
@@ -196,7 +276,7 @@ export function App() {
           onClick={() => setViewMode('landing')}
           className="text-purple-400 hover:text-purple-300 font-semibold underline underline-offset-2"
         >
-          View Rising Aura Kings & Landing Page
+          View Rising Aura Royalty &amp; Rankings
         </button>
       </div>
 
@@ -214,7 +294,6 @@ export function App() {
         <main className="flex-1 max-w-2xl min-w-0 space-y-5 mx-auto">
           {activeTab === 'feed' && (
             <div className="space-y-4">
-              {/* Mobile Stories Carousel */}
               <StoriesBar
                 currentUser={currentUser}
                 onOpenCreatePost={() => setCreatePostOpen(true)}
@@ -271,6 +350,7 @@ export function App() {
                     onShare={handleOpenShare}
                     onBookmark={handleToggleBookmark}
                     isBookmarked={savedPostIds.has(post.id)}
+                    onViewProfile={handleViewProfile}
                   />
                 ))
               )}
@@ -307,6 +387,10 @@ export function App() {
             />
           )}
 
+          {activeTab === 'chat' && (
+            <ChatView currentUser={currentUser} />
+          )}
+
           {activeTab === 'farms' && (
             <FarmsView
               catalogue={catalogue}
@@ -324,14 +408,23 @@ export function App() {
           )}
 
           {activeTab === 'leaderboard' && (
-            <LeaderboardView />
+            <LeaderboardView onViewProfile={handleViewProfile} />
           )}
 
           {activeTab === 'profile' && (
             <ProfileView
               currentUser={currentUser}
-              userPosts={posts.filter((p) => p.userId === currentUser?.id)}
+              viewingUserId={viewingProfileUser}
+              userPosts={posts.filter((p) => p.userId === (viewingProfileUser || currentUser?.id))}
               onDeletePost={handleDeletePost}
+              onMessageUser={(userId) => {
+                setActiveTab('chat');
+                showToast('Opening DM thread...');
+              }}
+              onBack={viewingProfileUser ? () => {
+                setViewingProfileUser(null);
+                setActiveTab('feed');
+              } : null}
             />
           )}
 
@@ -344,7 +437,10 @@ export function App() {
       {/* Mobile Fixed Bottom Navigation Bar */}
       <MobileBottomNav
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={(tab) => {
+          setViewingProfileUser(null);
+          setActiveTab(tab);
+        }}
         onOpenCreatePost={() => setCreatePostOpen(true)}
         farmStatus={farmStatus}
         currentUser={currentUser}

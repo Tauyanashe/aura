@@ -9,12 +9,13 @@ export const RISING_AURA_KINGS = {
       displayName: 'Elena Rostova',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
       tier: 'Artisan',
-      crown: '👑 Daily King',
+      crown: '👑 Daily Queen',
       auraScore: 840,
       velocity: '+95 AS today',
       featuredWork: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600',
       category: 'Visual Art',
       bio: 'Generative chromatic pattern experiments.',
+      gender: 'female',
     },
     {
       rank: 2,
@@ -31,6 +32,7 @@ export const RISING_AURA_KINGS = {
       featuredWork: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600',
       category: 'Soundscapes',
       bio: 'Modular analog synth soundscapes & architecture.',
+      gender: 'male',
     },
     {
       rank: 3,
@@ -47,6 +49,7 @@ export const RISING_AURA_KINGS = {
       featuredWork: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600',
       category: 'Photography',
       bio: 'Cyberpunk & wet pavement low-light photography.',
+      gender: 'female',
     },
     {
       rank: 4,
@@ -61,6 +64,7 @@ export const RISING_AURA_KINGS = {
       velocity: '+45 AS today',
       category: 'Procedural',
       bio: 'Orbital satellite data visualization pipelines.',
+      gender: 'male',
     },
     {
       rank: 5,
@@ -75,6 +79,7 @@ export const RISING_AURA_KINGS = {
       velocity: '+38 AS today',
       category: 'Photography',
       bio: 'Minimalist brutalist monochrome architecture.',
+      gender: 'female',
     },
   ],
   weekly: [
@@ -87,12 +92,13 @@ export const RISING_AURA_KINGS = {
       displayName: 'Sylvia Chen',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
       tier: 'Legend',
-      crown: '👑 Reigning Weekly Sovereign',
+      crown: '👑 Weekly Sovereign',
       auraScore: 2890,
       velocity: '+420 AS this week',
       featuredWork: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600',
       category: 'Photography',
       bio: 'Cyberpunk & wet pavement low-light photography.',
+      gender: 'female',
     },
     {
       rank: 2,
@@ -109,6 +115,7 @@ export const RISING_AURA_KINGS = {
       featuredWork: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600',
       category: 'Soundscapes',
       bio: 'Modular analog synth soundscapes & architecture.',
+      gender: 'male',
     },
     {
       rank: 3,
@@ -125,6 +132,7 @@ export const RISING_AURA_KINGS = {
       featuredWork: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600',
       category: 'Visual Art',
       bio: 'Generative chromatic pattern experiments.',
+      gender: 'female',
     },
     {
       rank: 4,
@@ -139,6 +147,7 @@ export const RISING_AURA_KINGS = {
       velocity: '+190 AS this week',
       category: 'Procedural',
       bio: 'Orbital satellite data visualization pipelines.',
+      gender: 'male',
     },
     {
       rank: 5,
@@ -153,6 +162,7 @@ export const RISING_AURA_KINGS = {
       velocity: '+140 AS this week',
       category: 'Photography',
       bio: 'Minimalist brutalist monochrome architecture.',
+      gender: 'female',
     },
   ],
 };

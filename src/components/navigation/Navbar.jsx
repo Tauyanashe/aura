@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Coins, PlusCircle, Bell, Search, BarChart3, Bookmark, UserCheck, Shield } from 'lucide-react';
+import { Sparkles, Coins, PlusCircle, Bell, Search, BarChart3, Bookmark, UserCheck, Shield, LogOut } from 'lucide-react';
 import { Button } from '../common/Button';
 
 export function Navbar({
@@ -9,6 +9,7 @@ export function Navbar({
   setActiveTab,
   onSwitchDemo,
   onOpenNotifications,
+  onLogout,
   unreadNotificationsCount = 2,
 }) {
   return (
@@ -123,8 +124,8 @@ export function Navbar({
             New Post
           </Button>
 
-          {/* Role Persona Switcher */}
-          <div className="flex items-center border-l border-slate-800 pl-2">
+          {/* Role Persona Switcher & Sign Out */}
+          <div className="flex items-center gap-1.5 border-l border-slate-800 pl-2">
             <button
               onClick={() =>
                 onSwitchDemo(currentUser?.role === 'admin' ? 'elena@aura.network' : 'moderator@aura.network')
@@ -136,6 +137,17 @@ export function Navbar({
               <span className="hidden sm:inline">Role:</span>
               <strong className="text-purple-400 uppercase font-black">{currentUser?.role || 'user'}</strong>
             </button>
+
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="text-[11px] text-slate-400 hover:text-rose-400 p-2 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center transition"
+                title="Sign Out"
+                aria-label="Sign Out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
       </div>

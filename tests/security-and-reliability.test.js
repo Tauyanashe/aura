@@ -4,6 +4,8 @@ import { farmsService } from '../src/services/farms.service';
 import { postsService } from '../src/services/posts.service';
 import { auraService } from '../src/services/aura.service';
 import { mediaService } from '../src/services/media.service';
+import { chatService } from '../src/services/chat.service';
+import { RISING_AURA_KINGS } from '../src/features/landing/landingData';
 
 // Mock localStorage for Node environment if not defined
 if (typeof localStorage === 'undefined') {
@@ -130,6 +132,49 @@ describe('AURA Pro-Level Security & Reliability Suite', () => {
       expect(auraService.getTierInfo(750).name).toBe('Artisan');
       expect(auraService.getTierInfo(1400).name).toBe('Aura Master');
       expect(auraService.getTierInfo(2500).name).toBe('Legend');
+    });
+  });
+
+  describe('6. Direct Messaging (Chat) & Privacy Subsystem', () => {
+    it('should create and retrieve conversations between two users', async () => {
+      const u1 = 'user-test-alice';
+      const u2 = 'user-test-bob';
+
+      const conv = await chatService.startConversation(u1, u2);
+      expect(conv).toBeDefined();
+      expect(conv.participants).toContain(u1);
+      expect(conv.participants).toContain(u2);
+
+      const convs = await chatService.getConversations(u1);
+      expect(convs.some(c => c.id === conv.id)).toBe(true);
+    });
+
+    it('should deliver and append messages in chronological sequence', async () => {
+      const u1 = 'user-test-alice';
+      const u2 = 'user-test-bob';
+
+      const conv = await chatService.startConversation(u1, u2);
+      await chatService.sendMessage(conv.id, u1, 'Hello Bob!');
+      await chatService.sendMessage(conv.id, u2, 'Hi Alice, great artwork!');
+
+      const messages = await chatService.getMessages(conv.id);
+      expect(messages.length).toBe(2);
+      expect(messages[0].body).toBe('Hello Bob!');
+      expect(messages[1].body).toBe('Hi Alice, great artwork!');
+    });
+  });
+
+  describe('7. Royalty Title Auto-Detection (Aura King vs Aura Queen)', () => {
+    it('should assign Aura Queen to female creators and Aura King to male creators', () => {
+      const dailyTop = RISING_AURA_KINGS.daily;
+      const elena = dailyTop.find(c => c.username === 'elena_v');
+      const marcus = dailyTop.find(c => c.username === 'marcus_k');
+
+      expect(elena.gender).toBe('female');
+      expect(elena.crown).toContain('Queen');
+
+      expect(marcus.gender).toBe('male');
+      expect(marcus.crown).not.toContain('Queen');
     });
   });
 });

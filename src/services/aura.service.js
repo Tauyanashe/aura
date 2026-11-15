@@ -99,11 +99,11 @@ export const auraService = {
   async getLeaderboard() {
     if (isMockMode) {
       return [
-        { rank: 1, username: 'sylvia_art', displayName: 'Sylvia Chen', score: 2840, tier: 'Legend', postsCount: 42, avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' },
-        { rank: 2, username: 'marcus_k', displayName: 'Marcus Thorne', score: 1950, tier: 'Aura Master', postsCount: 31, avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' },
-        { rank: 3, username: 'elena_v', displayName: 'Elena Rostova', score: 780, tier: 'Artisan', postsCount: 14, avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80' },
-        { rank: 4, username: 'tapiwa_dev', displayName: 'Tapiwa Moyo', score: 620, tier: 'Artisan', postsCount: 9, avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' },
-        { rank: 5, username: 'chloe_noir', displayName: 'Chloe Dupont', score: 380, tier: 'Apprentice', postsCount: 5, avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&auto=format&fit=crop&q=80' },
+        { id: 'user-sylvia-004', rank: 1, username: 'sylvia_art', displayName: 'Sylvia Chen', score: 2840, tier: 'Legend', postsCount: 42, gender: 'female', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' },
+        { id: 'user-marcus-003', rank: 2, username: 'marcus_k', displayName: 'Marcus Thorne', score: 1950, tier: 'Aura Master', postsCount: 31, gender: 'male', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' },
+        { id: 'user-elena-001', rank: 3, username: 'elena_v', displayName: 'Elena Rostova', score: 780, tier: 'Artisan', postsCount: 14, gender: 'female', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80' },
+        { id: 'user-tapiwa-005', rank: 4, username: 'tapiwa_dev', displayName: 'Tapiwa Moyo', score: 620, tier: 'Artisan', postsCount: 9, gender: 'male', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' },
+        { id: 'user-chloe-006', rank: 5, username: 'chloe_noir', displayName: 'Chloe Dupont', score: 380, tier: 'Apprentice', postsCount: 5, gender: 'female', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&auto=format&fit=crop&q=80' },
       ];
     }
 

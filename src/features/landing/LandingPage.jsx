@@ -17,6 +17,21 @@ import {
 import { RISING_AURA_KINGS } from './landingData';
 import { Button } from '../../components/common/Button';
 
+function getRankTitle(creator, timeframe) {
+  if (!creator) return '';
+  const gender = creator.gender;
+  const isFirst = creator.rank === 1;
+  if (timeframe === 'daily') {
+    if (isFirst) return gender === 'female' ? '👑 Daily Queen' : '👑 Daily King';
+    if (creator.rank === 2) return '🥈 Daily Runner-up';
+    return '🥉 Daily Bronze';
+  } else {
+    if (isFirst) return gender === 'female' ? '👑 Reigning Weekly Sovereign' : '👑 Reigning Weekly Sovereign';
+    if (creator.rank === 2) return '🥈 Weekly Titan';
+    return '🥉 Rising Pioneer';
+  }
+}
+
 export function LandingPage({ onEnterApp }) {
   const [timeframe, setTimeframe] = useState('daily'); // 'daily' or 'weekly'
   const kingsList = RISING_AURA_KINGS[timeframe];
@@ -47,7 +62,7 @@ export function LandingPage({ onEnterApp }) {
           <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-300">
             <a href="#rankings" className="hover:text-purple-400 transition flex items-center gap-1.5">
               <Crown className="w-3.5 h-3.5 text-amber-400" />
-              Aura Kings
+              Aura Royalty
             </a>
             <a href="#how-it-works" className="hover:text-purple-400 transition">
               How It Works
@@ -79,7 +94,7 @@ export function LandingPage({ onEnterApp }) {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300 font-semibold mb-2">
             <Flame className="w-4 h-4 text-amber-400" />
-            <span>Introducing AURA 2026 Private Beta • Zero-Budget Architecture</span>
+            <span>Introducing AURA 2026 Private Beta • Reputation-First Platform</span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.1]">
@@ -99,7 +114,7 @@ export function LandingPage({ onEnterApp }) {
               href="#rankings"
               className="w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-sm bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 transition text-center"
             >
-              Explore Aura Kings Leaderboard
+              Explore Aura Royalty Rankings
             </a>
           </div>
 
@@ -138,7 +153,7 @@ export function LandingPage({ onEnterApp }) {
                 </span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-                Rising Aura Kings
+                Rising Aura Royalty
               </h2>
               <p className="text-xs sm:text-sm text-slate-300">
                 Creators rising through verified peer ratings, constructive community critiques, and quality publications.
@@ -156,7 +171,7 @@ export function LandingPage({ onEnterApp }) {
                 }`}
               >
                 <Flame className="w-3.5 h-3.5" />
-                Daily Kings (24h)
+                Daily Rankings (24h)
               </button>
               <button
                 onClick={() => setTimeframe('weekly')}
@@ -222,7 +237,7 @@ export function LandingPage({ onEnterApp }) {
             <div className="order-1 md:order-2 glass-panel p-8 rounded-3xl border-2 border-amber-500/60 shadow-2xl shadow-amber-500/10 space-y-5 relative overflow-hidden bg-gradient-to-b from-slate-900 via-amber-950/10 to-slate-900 -translate-y-2">
               <div className="absolute top-0 right-0 px-4 py-1.5 bg-gradient-to-l from-amber-500 to-amber-600 text-slate-950 font-black text-xs uppercase tracking-wider rounded-bl-2xl shadow-lg flex items-center gap-1.5">
                 <Crown className="w-3.5 h-3.5 fill-current" />
-                {timeframe === 'daily' ? 'Daily King' : 'Weekly Sovereign'}
+                 {topThree[0].gender === 'female' ? (timeframe === 'daily' ? 'Daily Queen' : 'Weekly Sovereign') : (timeframe === 'daily' ? 'Daily King' : 'Weekly Sovereign')}
               </div>
 
               <div className="flex items-center justify-between pt-2">
@@ -360,6 +375,11 @@ export function LandingPage({ onEnterApp }) {
                         <span className="text-[10px] text-purple-300 px-1.5 py-0.2 bg-purple-500/10 rounded border border-purple-500/20">
                           {creator.tier}
                         </span>
+                        {creator.gender && (
+                          <span className="text-[10px] text-slate-300 px-1.5 py-0.2 bg-slate-800 rounded border border-slate-700">
+                            {creator.gender === 'female' ? '♀ Queen' : '♂ King'}
+                          </span>
+                        )}
                       </div>
                       <p className="text-[11px] text-slate-400">{creator.bio}</p>
                     </div>

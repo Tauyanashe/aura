@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Medal, Sparkles } from 'lucide-react';
+import { Trophy, Medal, Sparkles, Crown } from 'lucide-react';
 import { auraService } from '../../services/aura.service';
 
-export function LeaderboardView() {
+export function LeaderboardView({ onViewProfile }) {
   const [leaders, setLeaders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,49 +27,66 @@ export function LeaderboardView() {
         </div>
       </div>
 
-      <div className="glass-card divide-y divide-slate-800/80">
+      <div className="glass-card divide-y divide-slate-800/80 rounded-2xl overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-xs text-slate-400">Loading leaderboard rankings...</div>
         ) : (
-          leaders.map((user, idx) => (
-            <div key={user.username || idx} className="p-4 flex items-center justify-between hover:bg-slate-800/20 transition">
-              <div className="flex items-center gap-4">
-                <div className="w-8 text-center font-extrabold text-sm text-slate-400 flex items-center justify-center">
-                  {idx === 0 ? <Medal className="w-5 h-5 text-amber-400" /> :
-                   idx === 1 ? <Medal className="w-5 h-5 text-slate-300" /> :
-                   idx === 2 ? <Medal className="w-5 h-5 text-amber-600" /> :
-                   `#${idx + 1}`}
+          leaders.map((user, idx) => {
+            const isQueen = user.gender === 'female';
+            const title = idx === 0 ? (isQueen ? 'Aura Queen' : 'Aura King') : null;
+
+            return (
+              <div
+                key={user.username || idx}
+                onClick={() => onViewProfile && user.id && onViewProfile(user.id)}
+                className="p-4 flex items-center justify-between hover:bg-slate-800/40 transition cursor-pointer group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-8 text-center font-extrabold text-sm text-slate-400 flex items-center justify-center">
+                    {idx === 0 ? <Medal className="w-5 h-5 text-amber-400" /> :
+                     idx === 1 ? <Medal className="w-5 h-5 text-slate-300" /> :
+                     idx === 2 ? <Medal className="w-5 h-5 text-amber-600" /> :
+                     `#${idx + 1}`}
+                  </div>
+
+                  <img
+                    src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
+                    alt={user.displayName}
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-500/20 group-hover:ring-purple-400 transition"
+                  />
+
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold text-sm text-slate-100 group-hover:text-purple-300 transition">
+                        {user.displayName}
+                      </span>
+                      <span className="text-xs text-slate-400">@{user.username}</span>
+                      {title && (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 font-bold flex items-center gap-1">
+                          <Crown className="w-3 h-3" />
+                          {title}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
+                      <span className="text-purple-300 font-medium">{user.tier}</span>
+                      <span>•</span>
+                      <span>{user.postsCount || 0} published posts</span>
+                    </div>
+                  </div>
                 </div>
 
-                <img
-                  src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
-                  alt={user.displayName}
-                  className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-500/20"
-                />
-
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm text-slate-100">{user.displayName}</span>
-                    <span className="text-xs text-slate-400">@{user.username}</span>
+                <div className="text-right">
+                  <div className="text-sm font-extrabold text-white flex items-center gap-1 justify-end">
+                    <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                    <span>{user.score}</span>
+                    <span className="text-xs text-purple-300">AS</span>
                   </div>
-                  <div className="text-[11px] text-slate-400 flex items-center gap-2">
-                    <span className="text-purple-300 font-medium">{user.tier}</span>
-                    <span>•</span>
-                    <span>{user.postsCount || 0} published posts</span>
-                  </div>
+                  <div className="text-[10px] text-slate-400">Reputation Level</div>
                 </div>
               </div>
-
-              <div className="text-right">
-                <div className="text-sm font-extrabold text-white flex items-center gap-1 justify-end">
-                  <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                  <span>{user.score}</span>
-                  <span className="text-xs text-purple-300">AS</span>
-                </div>
-                <div className="text-[10px] text-slate-400">Reputation Level</div>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
