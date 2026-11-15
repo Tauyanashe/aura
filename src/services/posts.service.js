@@ -6,6 +6,23 @@ const MOCK_POSTS_KEY = 'aura_mock_posts';
 // No hardcoded test posts — feed starts empty for real users
 const INITIAL_MOCK_POSTS = [];
 
+function safeSavePosts(posts) {
+  try {
+    localStorage.setItem(MOCK_POSTS_KEY, JSON.stringify(posts));
+  } catch (quotaErr) {
+    // If browser localStorage quota (5MB) is reached, prune older posts
+    while (posts.length > 6) {
+      posts.pop();
+    }
+    try {
+      localStorage.setItem(MOCK_POSTS_KEY, JSON.stringify(posts));
+    } catch {
+      posts.length = Math.min(posts.length, 2);
+      try { localStorage.setItem(MOCK_POSTS_KEY, JSON.stringify(posts)); } catch { /* ignore */ }
+    }
+  }
+}
+
 export const postsService = {
   async getFeed(currentUserId, filter = 'latest') {
     if (isMockMode) {
@@ -91,7 +108,7 @@ export const postsService = {
       };
 
       posts.unshift(newPost);
-      localStorage.setItem(MOCK_POSTS_KEY, JSON.stringify(posts));
+      safeSavePosts(posts);
 
       // Award mock AP
       const walletKey = `aura_mock_wallets_${currentUserId}`;

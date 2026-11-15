@@ -1,6 +1,44 @@
 import { supabase, isMockMode } from '../lib/supabase';
 import { APP_CONFIG } from '../lib/constants';
 
+function compressMockImage(file, maxDimension = 1080, quality = 0.72) {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => resolve(e.target.result);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
+  });
+}
+
 export const mediaService = {
   validateFile(file) {
     if (!file) throw new Error('No file provided');
@@ -21,24 +59,19 @@ export const mediaService = {
     this.validateFile(file);
 
     if (isMockMode) {
-      // In mock mode, generate an object URL or base64 preview and simulate upload
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const fakeId = 'media-' + Math.random().toString(36).substring(2, 9);
-          resolve({
-            id: fakeId,
-            drive_file_id: 'drive_' + fakeId,
-            file_name: file.name,
-            mime_type: file.type,
-            size_bytes: file.size,
-            dataUrl: e.target.result,
-            reservationId: 'res-' + Math.random().toString(36).substring(2, 9),
-            status: 'uploaded',
-          });
-        };
-        reader.readAsDataURL(file);
-      });
+      // In mock mode, compress the media so it easily fits within browser localStorage quotas
+      const dataUrl = await compressMockImage(file);
+      const fakeId = 'media-' + Math.random().toString(36).substring(2, 9);
+      return {
+        id: fakeId,
+        drive_file_id: 'drive_' + fakeId,
+        file_name: file.name,
+        mime_type: file.type.startsWith('image/') ? 'image/jpeg' : file.type,
+        size_bytes: file.size,
+        dataUrl,
+        reservationId: 'res-' + Math.random().toString(36).substring(2, 9),
+        status: 'uploaded',
+      };
     }
 
     // Call Supabase Edge Function 'drive-upload'
